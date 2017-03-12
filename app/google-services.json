@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "886722978441",
+    "firebase_url": "https://uocs-safe.firebaseio.com",
+    "project_id": "uocs-safe",
+    "storage_bucket": "uocs-safe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886722978441:android:0af63882c886a16f",
+        "android_client_info": {
+          "package_name": "app.uocssafe.com.uocs_safe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "886722978441-nic5lbmjoba22n007m8rkkdr247p8144.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.uocssafe.com.uocs_safe",
+            "certificate_hash": "47092b942f4505a98a0b190febc2101c3ff20a17"
+          }
+        },
+        {
+          "client_id": "886722978441-l8t3qkqp9nd4442du53h6ktsrio3ej86.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmOrJ8wV5c8gLsz5vTa-PLyx1EgYKrNKk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "886722978441-l8t3qkqp9nd4442du53h6ktsrio3ej86.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
