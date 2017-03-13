@@ -12,6 +12,12 @@ public class Session {
     private Context ctx;
     private AppConfig config;
 
+    // All Shared Preferences Keys
+    private static final String KEY_USER_ID = "user_id";
+    private static final String KEY_USER_NAME = "user_name";
+    private static final String KEY_USER_EMAIL = "user_email";
+    private static final String KEY_NOTIFICATIONS = "notifications";
+
     public Session(Context ctx){
         this.ctx = ctx;
         config = new AppConfig();
@@ -51,6 +57,25 @@ public class Session {
 
     public String getUserID(){
         return prefs.getString("userID", null);
+    }
+
+    public void addNotification(String notification) {
+
+        // get old notifications
+        String oldNotifications = getNotifications();
+
+        if (oldNotifications != null) {
+            oldNotifications += "|" + notification;
+        } else {
+            oldNotifications = notification;
+        }
+
+        editor.putString(KEY_NOTIFICATIONS, oldNotifications);
+        editor.commit();
+    }
+
+    public String getNotifications() {
+        return prefs.getString(KEY_NOTIFICATIONS, null);
     }
 
     public void clearPreference()
