@@ -9,9 +9,12 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <permission android:name="app.uocssafe.com.uocs_safe.permission.C2D_MESSAGE"
-        android:protectionLevel="signature"/>
-    <uses-permission android:name="app.uocssafe.com.uocs_safe.permission.C2D_MESSAGE"/>
+
+    <permission
+        android:name="app.uocssafe.com.uocs_safe.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="app.uocssafe.com.uocs_safe.permission.C2D_MESSAGE" />
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -179,7 +182,8 @@
                 android:value=".UOCSActivity" />
         </activity>
 
-        <receiver android:name="com.google.android.gms.gcm.GcmReceiver"
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
@@ -189,20 +193,22 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".Message.MyGcmPushReceiver"
+        <service
+            android:name=".Message.MyGcmPushReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-
-        <service android:name=".Helper.GcmIntentService"
+        <service
+            android:name=".Helper.GcmIntentService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
 
+        <activity android:name=".Message.ChatRoomActivity"></activity>
     </application>
 
 </manifest>

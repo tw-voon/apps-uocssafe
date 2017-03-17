@@ -30,6 +30,27 @@
                 android:text="Username"/>
 
             <TextView
+                android:id="@+id/timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:textSize="14sp"
+                android:textColor="#999999"
+                android:text="12.00 AM"/>
+
+            <TextView android:id="@+id/count"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:gravity="center"
+                android:textSize="10dp"
+                android:textColor="@android:color/white"
+                android:layout_below="@id/timestamp"
+                android:layout_marginTop="5dp"
+                android:layout_alignParentRight="true"
+                android:text="5"
+                android:background="@drawable/bg_circle"/>
+
+            <TextView
                 android:id="@+id/previewContentMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

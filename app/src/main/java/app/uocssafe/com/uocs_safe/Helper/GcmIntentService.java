@@ -94,12 +94,15 @@ public class GcmIntentService extends IntentService {
                     @Override
                     public void onResponse(String response) {
                         Toast.makeText(getApplicationContext(), "Successfully created key" + response, Toast.LENGTH_SHORT).show();
+                        Intent registrationComplete = new Intent(AppConfig.SENT_TOKEN_TO_SERVER);
+                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(registrationComplete);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG ).show();
+
                     }
                 }){
             @Override

@@ -2,7 +2,7 @@ package app.uocssafe.com.uocs_safe.Helper;
 
 public class AppConfig {
 
-    private static String URL_DOMAIN = "http://10.64.107.186/uocs-safe/public/";
+    private static String URL_DOMAIN = "http://10.87.133.84/uocs-safe/public/";
     public static String URL_LOGIN = URL_DOMAIN + "api/login";
     public static String URL_Register = URL_DOMAIN + "api/register";
     public static String URL_EContacts = URL_DOMAIN + "api/emergency_contact";
@@ -13,6 +13,10 @@ public class AppConfig {
     public static String URL_RegisterGCMKey = URL_DOMAIN + "api/registerUserKey";
     public static String URL_SearchUser = URL_DOMAIN + "api/searchUser";
     public static String PREF_NAME = "uocs-safe";
+
+    public static String CHAT_ROOM = URL_DOMAIN + "api/fetchChatRoom";
+    public static String ADD_MESSAGE = URL_DOMAIN + "api/addMessage";
+    public static String FETCH_SINGLE_CHAT = URL_DOMAIN + "api/fetchSingleChatRoom";
 
     // flag to identify whether to show single line
     // or multi line text in push notification tray
