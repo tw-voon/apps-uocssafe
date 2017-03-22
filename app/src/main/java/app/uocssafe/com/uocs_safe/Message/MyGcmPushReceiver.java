@@ -18,6 +18,7 @@ import app.uocssafe.com.uocs_safe.Helper.NotificationUtils;
 import app.uocssafe.com.uocs_safe.Helper.Session;
 import app.uocssafe.com.uocs_safe.Message.Models.Messages;
 import app.uocssafe.com.uocs_safe.Message.Models.User;
+import app.uocssafe.com.uocs_safe.uocs_safe;
 
 public class MyGcmPushReceiver extends GcmListenerService {
     private NotificationUtils notificationUtils;
@@ -27,30 +28,42 @@ public class MyGcmPushReceiver extends GcmListenerService {
     public void onMessageReceived(String from, Bundle bundle){
 
         String title = bundle.getString("title");
-        String message = bundle.getString("message");
-        String image = bundle.getString("image");
-        String timestamp = bundle.getString("created_at");
-        Log.e(TAG, "From: " + from);
-        Log.e(TAG, "Title: " + title);
-        Log.e(TAG, "message: " + message);
-        Log.e(TAG, "image: " + image);
-        Log.e(TAG, "timestamp: " + timestamp);
+        Boolean isBackground = Boolean.valueOf(bundle.getString("is_background"));
+        String flag = bundle.getString("flag");
+        String data = bundle.getString("data");
+        Log.d(TAG, "From: " + from);
+        Log.d(TAG, "title: " + title);
+        Log.d(TAG, "isBackground: " + isBackground);
+        Log.d(TAG, "flag: " + flag);
+        Log.d(TAG, "data: " + data);
 
-        if(!NotificationUtils.isAppIsInBackground(getApplicationContext())){
-            Intent pushNotification = new Intent(AppConfig.PUSH_NOTIFICATION);
-            pushNotification.putExtra("message", message);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
-        } else {
-            Intent resultIntent = new Intent(getApplicationContext(),MessageActivity.class);
-            resultIntent.putExtra("message", message);
+        session = new Session(getApplicationContext());
 
-            if (TextUtils.isEmpty(image)) {
-                showNotificationMessage(getApplicationContext(), title, message, timestamp, resultIntent);
-            } else {
-                showNotificationMessageWithBigImage(getApplicationContext(), title, message, timestamp, resultIntent, image);
-            }
+        if (flag == null)
+            return;
+
+        if(session.loggedin()){
+            // user is not logged in, skipping push notification
+            Log.e(TAG, "user is not logged in, skipping push notification");
+            return;
         }
 
+        if (from.startsWith("/topics/")) {
+            // message received from some topic.
+        } else {
+            // normal downstream message.
+        }
+
+        switch (Integer.parseInt(flag)) {
+            case AppConfig.PUSH_TYPE_CHATROOM:
+                // push notification belongs to a chat room
+                processChatRoomPush(title, isBackground, data);
+                break;
+            case AppConfig.PUSH_TYPE_USER:
+                // push notification is specific to user
+                processUserMessage(title, isBackground, data);
+                break;
+        }
     }
 
     /*Processing chat room push message,

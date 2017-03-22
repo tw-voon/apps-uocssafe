@@ -143,26 +143,6 @@ public class MessageActivity extends AppCompatActivity {
             registerGCM();
             fetchChatRooms();
         }
-//
-//
-//
-//        Query selectRoom = userRef.child("users");
-//
-//        selectRoom.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()){
-//                    Log.d("Value: ---", postSnapshot.child(session.getFirebaseID()).getValue(String.class)+"");
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Log.d("Error: ---", databaseError.toString());
-//            }
-//        });
-//
-//        create_result();
     }
 
     /**

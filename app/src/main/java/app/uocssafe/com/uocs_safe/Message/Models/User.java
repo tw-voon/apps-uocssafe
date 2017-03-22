@@ -2,10 +2,6 @@ package app.uocssafe.com.uocs_safe.Message.Models;
 
 import java.io.Serializable;
 
-/**
- * Created by Shi Chee on 16-Mar-17.
- */
-
 public class User implements Serializable{
     private String id, name;
 

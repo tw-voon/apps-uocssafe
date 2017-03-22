@@ -2,7 +2,7 @@ package app.uocssafe.com.uocs_safe.Helper;
 
 public class AppConfig {
 
-    private static String URL_DOMAIN = "http://10.87.133.84/uocs-safe/public/";
+    private static String URL_DOMAIN = "http://192.168.137.1/uocs-safe/public/";
     public static String URL_LOGIN = URL_DOMAIN + "api/login";
     public static String URL_Register = URL_DOMAIN + "api/register";
     public static String URL_EContacts = URL_DOMAIN + "api/emergency_contact";
