@@ -1,12 +1,8 @@
 package app.uocssafe.com.uocs_safe.News;
 
-/**
- * Created by VoonTw on 24-Feb-17.
- */
-
 public class News {
 
-    private String username, title, description, imageLink;
+    private String username, title, description, imageLink, newsID, timestamp;
 
     public String getUsername(){
         return username;
@@ -20,13 +16,19 @@ public class News {
         return description;
     }
 
+    public String getTimestamp() { return timestamp; }
+
     public String getImageLink(){
         return imageLink;
     }
 
+    public String getNewsID() { return newsID; }
+
     public void setUsername(String username){
         this.username = username;
     }
+
+    public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
 
     public void setNewsTitle(String title){
         this.title = title;
@@ -39,5 +41,7 @@ public class News {
     public void setImageLink(String imageLink){
         this.imageLink = imageLink;
     }
+
+    public void setNewsID(String newsID){ this.newsID = newsID; }
 
 }

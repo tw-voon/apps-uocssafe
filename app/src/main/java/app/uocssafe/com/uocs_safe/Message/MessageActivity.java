@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -49,16 +50,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import app.uocssafe.com.uocs_safe.BaseActivity;
 import app.uocssafe.com.uocs_safe.Helper.AppConfig;
 import app.uocssafe.com.uocs_safe.Helper.GcmIntentService;
 import app.uocssafe.com.uocs_safe.Helper.NotificationUtils;
 import app.uocssafe.com.uocs_safe.Helper.Session;
 import app.uocssafe.com.uocs_safe.Helper.SimpleDividerItemDecoration;
 import app.uocssafe.com.uocs_safe.Message.Models.ChatRooms;
+import app.uocssafe.com.uocs_safe.Message.Models.Messages;
 import app.uocssafe.com.uocs_safe.R;
 import app.uocssafe.com.uocs_safe.uocs_safe;
 
-public class MessageActivity extends AppCompatActivity {
+public class MessageActivity extends BaseActivity {
 
     RecyclerView messageList;
     MessageAdapter messageAdapter;
@@ -74,10 +77,12 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_message);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.activity_message, contentFrameLayout);
+//        setContentView(R.layout.activity_message);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         session = new Session(this);
         userRef = FirebaseDatabase.getInstance().getReference("chat_room");
         recyclerView = (RecyclerView) findViewById(R.id.message_recycler_view);
@@ -126,6 +131,7 @@ public class MessageActivity extends AppCompatActivity {
                 Intent intent = new Intent(MessageActivity.this, ChatRoomActivity.class);
                 intent.putExtra("chat_room_id", chatRoom.getId());
                 intent.putExtra("name", chatRoom.getName());
+                chatRoom.setUnreadCount(0);
                 startActivity(intent);
             }
 
@@ -154,7 +160,7 @@ public class MessageActivity extends AppCompatActivity {
         // if the push is of chat room message
         // simply update the UI unread messages count
         if (type == AppConfig.PUSH_TYPE_CHATROOM) {
-            Message message = (Message) intent.getSerializableExtra("message");
+            Messages message = (Messages) intent.getSerializableExtra("message");
             String chatRoomId = intent.getStringExtra("chat_room_id");
 
             if (message != null && chatRoomId != null) {
@@ -171,7 +177,7 @@ public class MessageActivity extends AppCompatActivity {
     /**
      * Updates the chat list unread count and the last message
      */
-    private void updateRow(String chatRoomId, Message message) {
+    private void updateRow(String chatRoomId, Messages message) {
         for (ChatRooms cr : chatRoomArrayList) {
             if (cr.getId().equals(chatRoomId)) {
                 int index = chatRoomArrayList.indexOf(cr);

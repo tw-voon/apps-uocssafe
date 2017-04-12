@@ -21,6 +21,9 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
 import com.google.android.gms.iid.InstanceID;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -48,40 +51,41 @@ public class GcmIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        String key = intent.getStringExtra(KEY);
-        switch (key) {
-            case SUBSCRIBE:
-                String topic = intent.getStringExtra(TOPIC);
-                subcribeToTopic(topic);
-                break;
-            case UNSUBSCRIBE:
-                String topic1 = intent.getStringExtra(TOPIC);
-                unsubscribeFromTopic(topic1);
-                break;
-            default:
-                registerGCM();
-        }
+        registerGCM();
+
+//        String key = intent.getStringExtra(KEY);
+//        Log.d("key: ", " " + key );
+//        switch (key) {
+//            case SUBSCRIBE:
+//                String topic = intent.getStringExtra(TOPIC);
+//                subcribeToTopic(topic);
+//                break;
+//            case UNSUBSCRIBE:
+//                String topic1 = intent.getStringExtra(TOPIC);
+//                unsubscribeFromTopic(topic1);
+//                break;
+//            default:
+//                registerGCM();
+//        }
     }
 
     private void registerGCM() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String token = null;
 
-        try {
-            InstanceID instanceID = InstanceID.getInstance(this);
-            token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
-                        GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-            Log.e("TAG", "GCM Registration Token: " + token);
-                // sending the registration id to our server
+        token = FirebaseInstanceId.getInstance().getToken();
+        Log.e("TAG", "GCM Registration Token: " + token);
+
+        sharedPreferences.edit().putBoolean(AppConfig.SENT_TOKEN_TO_SERVER, true).apply();
+
+        if(token != null){
             sendRegistrationToServer(token);
-            sharedPreferences.edit().putBoolean(AppConfig.SENT_TOKEN_TO_SERVER, true).apply();
-            } catch (IOException e) {
-                e.printStackTrace();
-                sharedPreferences.edit().putBoolean(AppConfig.SENT_TOKEN_TO_SERVER, false).apply();
+            Intent registrationComplete = new Intent(AppConfig.REGISTRATION_COMPLETE);
+            registrationComplete.putExtra("token", token);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
+        } else {
+            sharedPreferences.edit().putBoolean(AppConfig.SENT_TOKEN_TO_SERVER, false).apply();
         }
-        Intent registrationComplete = new Intent(AppConfig.REGISTRATION_COMPLETE);
-        registrationComplete.putExtra("token", token);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
     }
 
     private void sendRegistrationToServer(final String token){
@@ -89,7 +93,7 @@ public class GcmIntentService extends IntentService {
         session = new Session(getApplicationContext());
         final String userID = session.getUserID();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_RegisterGCMKey,
+        StringRequest stringRequest = new StringRequest(Request.Method.PUT, AppConfig.URL_RegisterFirebaseKey,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -101,7 +105,7 @@ public class GcmIntentService extends IntentService {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG ).show();
+                        Toast.makeText(getApplicationContext(),"line108: "+ error.toString() + error.getCause(),Toast.LENGTH_LONG ).show();
 
                     }
                 }){

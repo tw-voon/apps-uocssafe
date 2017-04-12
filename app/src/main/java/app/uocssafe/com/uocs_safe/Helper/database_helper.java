@@ -32,6 +32,7 @@ public class database_helper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase myDB) {
+
         myDB.execSQL("CREATE TABLE IF NOT EXISTS "+ TABLE_NAME +" " +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "urllink TEXT, " +

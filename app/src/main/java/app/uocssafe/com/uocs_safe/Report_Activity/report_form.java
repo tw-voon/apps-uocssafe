@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.util.*;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,13 +39,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
+import app.uocssafe.com.uocs_safe.BaseActivity;
 import app.uocssafe.com.uocs_safe.Helper.AppConfig;
 import app.uocssafe.com.uocs_safe.R;
 import app.uocssafe.com.uocs_safe.Helper.Request_Handler;
 import app.uocssafe.com.uocs_safe.Helper.Session;
 import app.uocssafe.com.uocs_safe.Helper.Utility;
 
-public class report_form extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
+public class report_form extends BaseActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     public Button selectPic, upload, selectLocation;
     public EditText editTitle, description;
@@ -64,11 +66,13 @@ public class report_form extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_report_form);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.activity_report_form, contentFrameLayout);
+//        setContentView(R.layout.activity_report_form);
+//
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         session = new Session(this);
 
@@ -102,13 +106,13 @@ public class report_form extends AppCompatActivity implements View.OnClickListen
             case R.id.selectPicture:
                 selectImage();
                 break;
-            case R.id.edLocation:
+            /*case R.id.edLocation:
                 Toast.makeText(report_form.this, "Constructing", Toast.LENGTH_SHORT).show();
-                break;
+                break;*/
             case R.id.upload:
                 uploadImage();
                 break;
-            case R.id.selectedLocation:
+            case R.id.edLocation:
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 Intent intent;
                 try {

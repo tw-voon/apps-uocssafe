@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#0D47A1</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="year">#999999</color>
     <color name="title">#222222</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="colorYellow">#FFEB3B</color>
+    <color name="colorLightYellow">#FFF176</color>
+    <color name="colorOrange">#F58634</color>
+    <color name="colorAmber">#ffc107</color>
+    <color name="colorAmberBar">#abffc107</color>
 
     <color name="list_divider">#dedede</color>
     <color name="bg_bubble_self">#E1E1E1</color>

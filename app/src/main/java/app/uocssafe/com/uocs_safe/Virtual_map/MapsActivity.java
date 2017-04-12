@@ -3,16 +3,26 @@ package app.uocssafe.com.uocs_safe.Virtual_map;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -36,15 +46,20 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import app.uocssafe.com.uocs_safe.BaseActivity;
 import app.uocssafe.com.uocs_safe.Helper.AppConfig;
+import app.uocssafe.com.uocs_safe.Message.MessageActivity;
+import app.uocssafe.com.uocs_safe.News.NewsActivity;
 import app.uocssafe.com.uocs_safe.R;
 import app.uocssafe.com.uocs_safe.Helper.Request_Handler;
 import app.uocssafe.com.uocs_safe.Helper.Session;
+import app.uocssafe.com.uocs_safe.UOCSActivity;
+import app.uocssafe.com.uocs_safe.login_register.Login;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
+public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener{
 
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
@@ -54,17 +69,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ArrayList<Locations> locations = new ArrayList<Locations>();
     Request_Handler rh = new Request_Handler();
     private MarkerOptions options = new MarkerOptions();
+    Session session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.activity_maps, contentFrameLayout);
+
+        session = new Session(this);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+//        getActionBar();
     }
-
 
     public void getNewa(){
 

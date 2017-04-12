@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:fillViewport="true"
+    android:overScrollMode="always"
+    android:fadeScrollbars="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#FAFAFA">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true">
+
+            <ImageView
+                android:id="@+id/heroImageView"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:background="@drawable/bg_bubble_gray"
+                android:scaleType="fitCenter" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/heroImageView"
+                android:id="@+id/user_profile">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="35dp"
+                    android:layout_height="38dp"
+                    android:layout_marginTop="5dp"
+                    android:paddingLeft="10dp"
+                    android:src="@drawable/ic_person_outline_black_24dp"
+                    app:civ_border_color="#FFFFFF"
+                    app:civ_border_width="2dp" />
+
+                <TextView
+                    android:id="@+id/username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textColor="#000000"
+                    android:layout_marginTop="5dp"
+                    android:padding="10dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/timestamp"
+                    android:gravity="end"
+                    android:textColor="#000000"
+                    android:layout_marginTop="5dp"
+                    android:padding="10dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/stickyView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textColor="#000000"
+                android:layout_below="@+id/user_profile"
+                android:paddingTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingBottom="3dp"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/stickyView"
+                android:paddingLeft="10dp"
+                android:paddingBottom="10dp"
+                android:textSize="15sp"
+                android:id="@+id/locationName"/>
+
+            <TextView
+                android:id="@+id/post_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/locationName"
+                android:paddingLeft="10dp"
+                android:textColor="#000000"
+                android:textSize="15sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/post_description"
+                android:textColor="#000000"
+                android:paddingTop="10dp"
+                android:paddingLeft="10dp"
+                android:text="@string/comment"
+                android:textSize="15sp"
+                android:id="@+id/txtComment"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:layout_below="@+id/txtComment"
+                android:text="@string/no_comment"
+                android:id="@+id/no_comment"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/comment_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="60dp"
+                android:layout_below="@+id/txtComment"
+                android:padding="10dp"
+                android:scrollbars="vertical" />
+
+            <LinearLayout
+                android:background="@android:color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="bottom|end"
+                android:orientation="horizontal"
+                android:weightSum="4"
+                tools:layout_editor_absoluteY="0dp"
+                tools:layout_editor_absoluteX="8dp"
+                android:id="@+id/sendComment">
+
+                <EditText android:id="@+id/message"
+                    android:layout_width="0dp"
+                    android:hint="@string/entermsg"
+                    android:paddingLeft="10dp"
+                    android:background="@null"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="16dp"
+                    android:lines="1"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3" />
+
+                <Button android:id="@+id/btn_send"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:text="@string/send"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorPrimary" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+</ScrollView>
+

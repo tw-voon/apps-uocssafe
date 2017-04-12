@@ -1,6 +1,7 @@
 package app.uocssafe.com.uocs_safe.News;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +25,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView username, report_title, report_desc;
+        TextView username, report_title, report_desc, timestamp;
         ImageView report_image;
         Button comment;
 
@@ -34,6 +35,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
             report_title = (TextView) itemView.findViewById(R.id.report_title);
             report_desc = (TextView) itemView.findViewById(R.id.description);
             report_image = (ImageView) itemView.findViewById(R.id.imageView);
+            timestamp = (TextView) itemView.findViewById(R.id.timestamp);
             comment = (Button) itemView.findViewById(R.id.comment);
         }
     }
@@ -58,10 +60,14 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
         Picasso.with(context).load(news.getImageLink()).fit().into(holder.report_image);
         holder.report_desc.setText(news.getNewsDescription());
         holder.report_title.setText(news.getReportTitle());
+        holder.timestamp.setText(news.getTimestamp());
         holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(v.getContext(), "Under constructing comment feature for"+ news.getReportTitle(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context.getApplicationContext(), SinglePost.class);
+                intent.putExtra("report_ID", news.getNewsID());
+                context.startActivity(intent);
             }
         });
 

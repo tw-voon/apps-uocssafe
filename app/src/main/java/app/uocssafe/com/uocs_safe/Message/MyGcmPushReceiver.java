@@ -9,6 +9,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.gcm.GcmListenerService;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,49 +22,112 @@ import app.uocssafe.com.uocs_safe.Message.Models.Messages;
 import app.uocssafe.com.uocs_safe.Message.Models.User;
 import app.uocssafe.com.uocs_safe.uocs_safe;
 
-public class MyGcmPushReceiver extends GcmListenerService {
+public class MyGcmPushReceiver extends FirebaseMessagingService {
+
     private NotificationUtils notificationUtils;
     private static final String TAG = MyGcmPushReceiver.class.getSimpleName();
     Session session;
+    String title, message, imageUrl, timestamp, flag;
+    Boolean isBackground;
 
-    public void onMessageReceived(String from, Bundle bundle){
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage){
 
-        String title = bundle.getString("title");
-        Boolean isBackground = Boolean.valueOf(bundle.getString("is_background"));
-        String flag = bundle.getString("flag");
-        String data = bundle.getString("data");
-        Log.d(TAG, "From: " + from);
-        Log.d(TAG, "title: " + title);
-        Log.d(TAG, "isBackground: " + isBackground);
-        Log.d(TAG, "flag: " + flag);
-        Log.d(TAG, "data: " + data);
+        JSONObject data;
+        JSONObject payload = null;
 
-        session = new Session(getApplicationContext());
+//        Log.d(TAG, "datass: " + remoteMessage.getData());
 
-        if (flag == null)
-            return;
-
-        if(session.loggedin()){
-            // user is not logged in, skipping push notification
-            Log.e(TAG, "user is not logged in, skipping push notification");
-            return;
+        // Check if message contains a notification payload.
+        if (remoteMessage.getNotification() != null) {
+//            Log.e(TAG, "Notification Body: " + remoteMessage.getNotification().getBody());
+            handleNotification(remoteMessage.getNotification().getBody());
         }
 
-        if (from.startsWith("/topics/")) {
-            // message received from some topic.
-        } else {
-            // normal downstream message.
-        }
+        // Check if message contains a data payload.
+        if (remoteMessage.getData().size() > 0) {
+//            Log.e(TAG, "Data Payload: " + remoteMessage.getData().toString());
 
-        switch (Integer.parseInt(flag)) {
-            case AppConfig.PUSH_TYPE_CHATROOM:
-                // push notification belongs to a chat room
-                processChatRoomPush(title, isBackground, data);
-                break;
-            case AppConfig.PUSH_TYPE_USER:
-                // push notification is specific to user
-                processUserMessage(title, isBackground, data);
-                break;
+            try {
+                JSONObject json = new JSONObject(remoteMessage.getData().get("data"));
+//                data = json.getJSONObject("data");
+
+                title = remoteMessage.getData().get("title");
+                message = json.getString("message");
+                isBackground = Boolean.valueOf(remoteMessage.getData().get("is_background"));
+//                imageUrl = data.getString("image");
+                timestamp = json.getString("created_at");
+                flag = remoteMessage.getData().get("flag");
+//                payload = data.getJSONObject("payload");
+
+//                Log.e(TAG, "title: " + title);
+//                Log.e(TAG, "message: " + message);
+//                Log.e(TAG, "isBackground: " + isBackground);
+//                Log.e(TAG, "payload: " + payload.toString());
+//                Log.e(TAG, "imageUrl: " + imageUrl);
+//                Log.e(TAG, "timestamp: " + timestamp);
+//                Log.e(TAG, "Flag: " + flag);
+
+                switch (Integer.parseInt(flag)) {
+                    case AppConfig.PUSH_TYPE_CHATROOM:
+                        // push notification belongs to a chat room
+                        processChatRoomPush(title, isBackground, json.toString());
+                        break;
+                    case AppConfig.PUSH_TYPE_USER:
+                        // push notification is specific to user
+                        processUserMessage(title, isBackground, json.toString());
+                        break;
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Exception: " + e.getMessage());
+            }
+        }
+//        Log.d(TAG, "From: " + from);
+//        Log.d(TAG, "title: " + title);
+//        Log.d(TAG, "isBackground: " + isBackground);
+//        Log.d(TAG, "flag: " + flag);
+//        Log.d(TAG, "data: " + data);
+//        Toast.makeText(getApplicationContext(), "Message received", Toast.LENGTH_SHORT).show();
+//
+//        session = new Session(getApplicationContext());
+//
+//        if (flag == null)
+//            return;
+//
+//        if(session.loggedin()){
+//            // user is not logged in, skipping push notification
+//            Log.e(TAG, "user is not logged in, skipping push notification");
+//            return;
+//        }
+//
+//        if (from.startsWith("/topics/")) {
+//            // message received from some topic.
+//        } else {
+//            // normal downstream message.
+//        }
+//
+//        switch (Integer.parseInt(flag)) {
+//            case AppConfig.PUSH_TYPE_CHATROOM:
+//                // push notification belongs to a chat room
+//                processChatRoomPush(title, isBackground, payload.toString());
+//                break;
+//            case AppConfig.PUSH_TYPE_USER:
+//                // push notification is specific to user
+//                processUserMessage(title, isBackground, payload.toString());
+//                break;
+//        }
+    }
+
+    private void handleNotification(String message) {
+        if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
+            // app is in foreground, broadcast the push message
+            Intent pushNotification = new Intent(AppConfig.PUSH_NOTIFICATION);
+            pushNotification.putExtra("message", message);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
+
+            // play notification sound
+            NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
+            notificationUtils.playNotificationSound();
         }
     }
 
@@ -72,6 +137,7 @@ public class MyGcmPushReceiver extends GcmListenerService {
 
     private void processChatRoomPush(String title, boolean isBackground, String data){
         session = new Session(getApplicationContext());
+        Log.d(TAG, data);
         if(!isBackground){
             try{
                 JSONObject datObj = new JSONObject(data);
@@ -86,13 +152,13 @@ public class MyGcmPushReceiver extends GcmListenerService {
 
                 JSONObject uObj = datObj.getJSONObject("user");
 
-                if(uObj.getString("user_id").equals(session.getUserID())){
+                if(uObj.getString("id").equals(session.getUserID())){
                     Log.e(TAG, "Skipping the push message as it belongs to same user");
                     return;
                 }
 
                 User user = new User();
-                user.setId(uObj.getString("user_id"));
+                user.setId(uObj.getString("id"));
                 user.setName(uObj.getString("name"));
                 message.setUser(user);
 

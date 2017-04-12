@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -26,12 +27,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import app.uocssafe.com.uocs_safe.BaseActivity;
 import app.uocssafe.com.uocs_safe.Helper.AppConfig;
 import app.uocssafe.com.uocs_safe.R;
 import app.uocssafe.com.uocs_safe.Helper.database_helper;
 import app.uocssafe.com.uocs_safe.Helper.internet_helper;
 
-public class Reporting_Category extends AppCompatActivity {
+public class Reporting_Category extends BaseActivity {
 
     private static final int read_timeout = 10000;
     private static final int connection_timeout = 15000;
@@ -46,10 +48,12 @@ public class Reporting_Category extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reporting__category);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.activity_reporting__category, contentFrameLayout);
+//        setContentView(R.layout.activity_reporting__category);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         myDB = new database_helper(this);
         config = new AppConfig();
 

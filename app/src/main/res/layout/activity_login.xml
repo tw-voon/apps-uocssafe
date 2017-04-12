@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,6 +9,7 @@
     android:orientation="vertical"
     android:layout_centerVertical="true"
     android:gravity="center"
+    android:padding="25dp"
     tools:context="app.uocssafe.com.uocs_safe.login_register.Login">
 
     <TextView
@@ -25,13 +27,15 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColorHint="@color/colorWhite">
+        android:textColorHint="@color/colorWhite"
+        app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout">
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:id="@+id/etEmail"
+            android:inputType="text"
+            android:id="@+id/etUsername"
+            android:textColor="@color/colorWhite"
             android:hint="@string/prompt_name"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
@@ -40,16 +44,22 @@
 
     </android.support.design.widget.TextInputLayout>
 
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="25dp" />
+
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColorHint="@color/colorWhite">
+        android:textColorHint="@color/colorWhite"
+        app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout">
 
         <EditText
             android:id="@+id/etPass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
+            android:textColor="@color/colorWhite"
             android:hint="@string/prompt_password"
             android:layout_marginBottom="10dp"
             android:layout_marginRight="10dp"

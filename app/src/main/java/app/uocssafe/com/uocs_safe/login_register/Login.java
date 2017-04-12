@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +50,7 @@ public class Login extends AppCompatActivity {
         config = new AppConfig();
         session = new Session(this);
 
-        txtEmail = (TextView) findViewById(R.id.etEmail);
+        txtEmail = (TextView) findViewById(R.id.etUsername);
         txtPassword = (TextView) findViewById(R.id.etPass);
         onClick();
 
@@ -92,10 +93,10 @@ public class Login extends AppCompatActivity {
 
     private void login() {
 
-        final String name = txtEmail.getText().toString();
-        final String pass = txtPassword.getText().toString();
+        final String name = txtEmail.getText().toString().trim();
+        final String pass = txtPassword.getText().toString().trim();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, config.URL_LOGIN,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_LOGIN,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -105,11 +106,11 @@ public class Login extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(Login.this,error.toString(),Toast.LENGTH_LONG ).show();
+                        Toast.makeText(Login.this, "Line109: " + error.toString() + error.getCause(),Toast.LENGTH_LONG ).show();
                     }
                 }){
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams() {
                 Map<String,String> map = new HashMap<String,String>();
                 map.put("name",name);
                 map.put("pass",pass);
@@ -133,6 +134,7 @@ public class Login extends AppCompatActivity {
                 Toast.makeText(Login.this, "Success", Toast.LENGTH_SHORT).show();
                 session.setLoggedin(true);
                 session.putData(dataObject.getString("id"), dataObject.getString("name"));
+                registerKey(dataObject.getString("id"));
                 session.putFirebaseID(dataObject.getString("firebaseID"));
                 Toast.makeText(Login.this, dataObject.getInt("id")+ " " + dataObject.getString("name") + " " + dataObject.getString("firebaseID"), Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(Login.this, UOCSActivity.class));
@@ -144,6 +146,39 @@ public class Login extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+    }
+
+    private void registerKey(final String userID){
+
+        final String token =  FirebaseInstanceId.getInstance().getToken();
+        Log.d("token: 155", token);
+        Log.d("token: 156", userID);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.PUT, AppConfig.URL_RegisterFirebaseKey,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(Login.this, "Key successfull stored", Toast.LENGTH_SHORT).show();
+                        Log.d("response", response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(Login.this,error.toString(),Toast.LENGTH_LONG ).show();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String,String> map = new HashMap<String,String>();
+                map.put("token",token);
+                map.put("userID", userID);
+                return map;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
 
     }
 

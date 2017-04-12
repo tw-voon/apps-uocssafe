@@ -19,6 +19,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -112,9 +113,13 @@ public class Register extends AppCompatActivity {
         }
     }
 
-    private void registerKey(final String key, final String userID){
+    private void registerKey(final String userID){
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_RegisterFirebaseKey,
+        final String token =  FirebaseInstanceId.getInstance().getToken();
+        Log.d("token: 119", token);
+        Log.d("token: 120", userID);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.PUT, AppConfig.URL_RegisterFirebaseKey,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -130,7 +135,7 @@ public class Register extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<String,String>();
-                map.put("key",key);
+                map.put("token",token);
                 map.put("userID", userID);
                 return map;
             }
@@ -149,10 +154,10 @@ public class Register extends AppCompatActivity {
 
             if (jObject.getString("status").equals("success")) {
                 JSONObject dataObject = new JSONObject(jObject.getString("data"));
-                getFirebaseKey(dataObject.getString("name"), dataObject.getString("id"));
                 Toast.makeText(Register.this, "Success", Toast.LENGTH_SHORT).show();
                 session.setLoggedin(true);
                 session.putData(dataObject.getString("id"), dataObject.getString("name"));
+                registerKey(dataObject.getString("id"));
                 Toast.makeText(Register.this, dataObject.getInt("id") + " " + dataObject.getString("name"), Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(Register.this, UOCSActivity.class));
                 finish();
@@ -171,8 +176,7 @@ public class Register extends AppCompatActivity {
         userRef.child("users").child(mGroupId).child("user_id").setValue(userID);
         userRef.child("users").child(mGroupId).child("chat_rooms").setValue(0);
 
-        registerKey(mGroupId, userID);
-        session.putFirebaseID(mGroupId);
+
     }
 
 

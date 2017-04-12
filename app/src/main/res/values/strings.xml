@@ -1,5 +1,13 @@
 <resources>
     <string name="app_name">UOCS-Safe</string>
+    <string name="main">Main Menu</string>
+    <string name="message">Message</string>
+    <string name="news">Newsletter</string>
+    <string name="map">Map</string>
+    <string name="tips">Safety Tips</string>
+    <string name="setting">Setting</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="personal">Personal</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -24,4 +32,9 @@
     </string>
 
     <string name="add">Add User</string>
+    <string name="min"> Min ago.</string>
+    <string name="entermsg">Enter a message</string>
+    <string name="send">Send</string>
+    <string name="comment">Comments:</string>
+    <string name="no_comment">No comment found on this post</string>
 </resources>

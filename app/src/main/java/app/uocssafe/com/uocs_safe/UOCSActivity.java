@@ -22,6 +22,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,20 +35,21 @@ import app.uocssafe.com.uocs_safe.Helper.AppConfig;
 import app.uocssafe.com.uocs_safe.Helper.GcmIntentService;
 import app.uocssafe.com.uocs_safe.Helper.Session;
 import app.uocssafe.com.uocs_safe.Helper.database_helper;
+import app.uocssafe.com.uocs_safe.Message.MessageActivity;
 import app.uocssafe.com.uocs_safe.News.NewsActivity;
+import app.uocssafe.com.uocs_safe.Virtual_map.MapsActivity;
 import app.uocssafe.com.uocs_safe.login_register.Login;
 
 
-public class UOCSActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class UOCSActivity extends BaseActivity{
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     //button declaration
-    public Button emergencyContact;
-    public Button reporting;
-    public Button virtualMap;
+    public TableRow emergencyContact;
+    public RelativeLayout reporting;
+    public RelativeLayout virtualMap;
     private TextView name;
     database_helper myDB;
     Session session;
@@ -55,24 +59,26 @@ public class UOCSActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Remember this is the FrameLayout area within your activity_main.xml
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.content_uocs, contentFrameLayout);
+//        setContentView(R.layout.activity_uocs);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+        name = (TextView)findViewById(R.id.username);
         myDB = new database_helper(this);
         session = new Session(this);
         config = new AppConfig();
+        config.changeStatusBarColor(R.color.colorPrimary, UOCSActivity.this);
 
-        setContentView(R.layout.activity_uocs);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        name = (TextView)findViewById(R.id.username);
-
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawer.setDrawerListener(toggle);
+//        toggle.syncState();
+//
+//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+//        navigationView.setNavigationItemSelectedListener(this);
 
         onClick();
 
@@ -113,8 +119,8 @@ public class UOCSActivity extends AppCompatActivity
 
     // starting the service to register with GCM
     private void registerGCM() {
-        Intent intent = new Intent(this, GcmIntentService.class);
-        intent.putExtra("key", "register");
+        Intent intent = new Intent(UOCSActivity.this, GcmIntentService.class);
+        intent.putExtra(GcmIntentService.KEY, "register");
         startService(intent);
     }
 
@@ -143,9 +149,9 @@ public class UOCSActivity extends AppCompatActivity
 
 
     public void onClick() {
-        emergencyContact = (Button) findViewById(R.id.emergency_contact);
-        reporting = (Button) findViewById(R.id.reporting);
-        virtualMap = (Button) findViewById(R.id.Map);
+        emergencyContact = (TableRow) findViewById(R.id.emergency_contact);
+        reporting = (RelativeLayout) findViewById(R.id.reporting);
+        virtualMap = (RelativeLayout) findViewById(R.id.Map);
 
         emergencyContact.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,8 +178,6 @@ public class UOCSActivity extends AppCompatActivity
                     Intent intent = new Intent("app.uocssafe.com.uocs_safe.Report_Activity.Reporting_Category");
                     startActivity(intent);
                 }
-
-
             }
         });
 
@@ -219,7 +223,7 @@ public class UOCSActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+/*    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -230,28 +234,25 @@ public class UOCSActivity extends AppCompatActivity
             startActivity(intent);
 //            overridePendingTransition(R.transition.fade_in,R.transition.fade_out);
 //            finish();
-        } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-            session.setLoggedin(false);
-            finish();
-            startActivity(new Intent(UOCSActivity.this,Login.class));
-
-        } else if (id == R.id.news){
+        }  else if (id == R.id.news){
             startActivity(new Intent(UOCSActivity.this, NewsActivity.class));
+        } else if (id == R.id.mainmenu){
+            Log.d("current: ", this.getClass().getSimpleName());
+            if(this.getClass().getSimpleName().equals("UOCSActivity"))
+                Log.d("Status: ", "Already in UOCSActivity");
+            else
+                startActivity(new Intent(UOCSActivity.this, UOCSActivity.class));
+        } else if (id == R.id.map){
+            startActivity(new Intent(UOCSActivity.this, MapsActivity.class));
+        } else if (id== R.id.message){
+            startActivity(new Intent(UOCSActivity.this, MessageActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
+    }*/
 
     @Override
     public void onStart() {

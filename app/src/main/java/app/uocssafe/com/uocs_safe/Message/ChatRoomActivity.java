@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import app.uocssafe.com.uocs_safe.BaseActivity;
 import app.uocssafe.com.uocs_safe.Helper.AppConfig;
 import app.uocssafe.com.uocs_safe.Helper.NotificationUtils;
 import app.uocssafe.com.uocs_safe.Helper.Session;
@@ -42,7 +44,7 @@ import app.uocssafe.com.uocs_safe.Message.Models.User;
 import app.uocssafe.com.uocs_safe.R;
 import app.uocssafe.com.uocs_safe.uocs_safe;
 
-public class ChatRoomActivity extends AppCompatActivity {
+public class ChatRoomActivity extends BaseActivity {
 
     private String TAG = ChatRoomActivity.class.getSimpleName();
 
@@ -58,10 +60,8 @@ public class ChatRoomActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_room);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.activity_chat_room, contentFrameLayout);
 
         session = new Session(this);
 
@@ -180,12 +180,14 @@ public class ChatRoomActivity extends AppCompatActivity {
                     // check for error
                     if (obj.getBoolean("error") == false) {
                         JSONObject commentObj = obj.getJSONObject("message");
+                        JSONObject dObj = commentObj.getJSONObject("data");
+                        JSONObject mObj = dObj.getJSONObject("message");
 
-                        String commentId = commentObj.getString("message_id");
-                        String commentText = commentObj.getString("message");
-                        String createdAt = commentObj.getString("created_at");
+                        String commentId = mObj.getString("message_id");
+                        String commentText = mObj.getString("message");
+                        String createdAt = mObj.getString("created_at");
 
-                        JSONObject userObj = obj.getJSONObject("user");
+                        JSONObject userObj = dObj.getJSONObject("user");
                         String userId = userObj.getString("id");
                         String userName = userObj.getString("name");
                         User user = new User(userId, userName);

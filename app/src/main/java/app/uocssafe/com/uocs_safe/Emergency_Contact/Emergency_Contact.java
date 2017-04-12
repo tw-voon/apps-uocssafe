@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -29,12 +30,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import app.uocssafe.com.uocs_safe.BaseActivity;
 import app.uocssafe.com.uocs_safe.Helper.AppConfig;
 import app.uocssafe.com.uocs_safe.R;
 import app.uocssafe.com.uocs_safe.Helper.database_helper;
 import app.uocssafe.com.uocs_safe.Helper.internet_helper;
 
-public class Emergency_Contact extends AppCompatActivity implements SearchView.OnQueryTextListener{
+public class Emergency_Contact extends BaseActivity implements SearchView.OnQueryTextListener{
 
     //CONNNECTION DETAILS
     public static final int connection_timeout = 10000;
@@ -50,10 +52,12 @@ public class Emergency_Contact extends AppCompatActivity implements SearchView.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_emergency_contact);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.activity_emergency_contact, contentFrameLayout);
+//        setContentView(R.layout.activity_emergency_contact);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         myDB = new database_helper(this);
         config = new AppConfig();

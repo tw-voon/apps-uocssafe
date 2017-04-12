@@ -1,10 +1,13 @@
 package app.uocssafe.com.uocs_safe;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.LruCache;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -19,6 +22,7 @@ public class uocs_safe extends Application{
     private static uocs_safe instances;
     private static Session pref;
     private RequestQueue mRequestQueue;
+    ImageLoader imageLoader;
     public static final String TAG = uocs_safe.class.getSimpleName();
 
     @Override
@@ -27,6 +31,24 @@ public class uocs_safe extends Application{
         instances = this;
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
+
+//    uocs_safe(){
+//        imageLoader = new ImageLoader(mRequestQueue,
+//                new ImageLoader.ImageCache() {
+//                    private final LruCache<String, Bitmap>
+//                            cache = new LruCache<String, Bitmap>(20);
+//
+//                    @Override
+//                    public Bitmap getBitmap(String url) {
+//                        return cache.get(url);
+//                    }
+//
+//                    @Override
+//                    public void putBitmap(String url, Bitmap bitmap) {
+//                        cache.put(url, bitmap);
+//                    }
+//                });
+//    }
 
     public static synchronized uocs_safe getInstance() {
         return instances;

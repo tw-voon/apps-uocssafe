@@ -9,7 +9,17 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.widget.FrameLayout;
 import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,14 +27,17 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
+import app.uocssafe.com.uocs_safe.BaseActivity;
 import app.uocssafe.com.uocs_safe.Helper.AppConfig;
 import app.uocssafe.com.uocs_safe.R;
 import app.uocssafe.com.uocs_safe.Helper.Request_Handler;
 import app.uocssafe.com.uocs_safe.Helper.Session;
 import app.uocssafe.com.uocs_safe.Helper.internet_helper;
+import app.uocssafe.com.uocs_safe.uocs_safe;
 
-public class NewsActivity extends AppCompatActivity implements SearchView.OnQueryTextListener{
+public class NewsActivity extends BaseActivity implements SearchView.OnQueryTextListener{
 
     public static final int connection_timeout = 10000;
     public static final int read_timeout = 15000;
@@ -37,10 +50,8 @@ public class NewsActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.activity_news, contentFrameLayout);
 
         if(hasInternet.isNetworkStatusAvialable(NewsActivity.this))
             getNewsFeed();
@@ -49,69 +60,67 @@ public class NewsActivity extends AppCompatActivity implements SearchView.OnQuer
 
     }
 
-    public void getNewsFeed(){
+    private void getNewsFeed(){
 
         Session session = new Session(this);
         final String userID = session.getUserID();
 
-        class getNewsFeed extends AsyncTask<String, String, String> {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_GetReport,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
 
-            ProgressDialog loading;
-            Context context;
+                        processNews(response);
 
-            private getNewsFeed(Context context){
-                this.context = context;
-                loading = new ProgressDialog(context);
-            }
-
-            @Override
-            protected void onPreExecute() {
-                loading.setMessage("Loading News Feed");
-                loading.setCancelable(false);
-                loading.show();
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                loading.dismiss();
-                Toast.makeText(NewsActivity.this, result, Toast.LENGTH_SHORT).show();
-
-                try {
-                    JSONArray decodedResult = new JSONArray(result);
-                    for (int i = 0; i<decodedResult.length(); i++){
-                        JSONObject json_data = decodedResult.getJSONObject(i);
-                        News news = new News();
-                        news.setUsername(json_data.getString("name"));
-                        news.setNewsTitle(json_data.getString("report_Title"));
-                        news.setDescription(json_data.getString("report_Description"));
-                        news.setImageLink(json_data.getString("image"));
-                        newsData.add(news);
                     }
+                },
 
-                    newslist = (RecyclerView) findViewById(R.id.report_recyclerView);
-                    newsAdapter = new NewsAdapter(NewsActivity.this, newsData);
-                    newslist.setAdapter(newsAdapter);
-                    newslist.setLayoutManager(new LinearLayoutManager(NewsActivity.this));
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        Toast.makeText(NewsActivity.this, "An Error occur, Please try again later", Toast.LENGTH_SHORT).show();
+
                 }
-            }
-
+        }){
             @Override
-            protected String doInBackground(String... params) {
-                String result;
-
-                HashMap<String,String> param = new HashMap<String,String>();
-                param.put("userID", userID);
-                result = rh.sendPostRequest(AppConfig.URL_GetReport, param);
-                return result;
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> map = new HashMap<String,String>();
+                map.put("userID",userID);
+                return map;
             }
-        }
+        };
 
-        getNewsFeed u = new getNewsFeed(NewsActivity.this);
-        u.execute();
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+
     }
 
+    private void processNews(String result) {
+
+        try {
+            JSONArray decodedResult = new JSONArray(result);
+            for (int i = 0; i<decodedResult.length(); i++){
+                JSONObject json_data = decodedResult.getJSONObject(i);
+                News news = new News();
+                news.setUsername(json_data.getString("name"));
+                news.setNewsTitle(json_data.getString("report_Title"));
+                news.setDescription(json_data.getString("report_Description"));
+                news.setImageLink(json_data.getString("image"));
+                news.setNewsID(json_data.getString("report_ID"));
+                news.setTimestamp(json_data.getString("created_at"));
+                newsData.add(news);
+            }
+
+            newslist = (RecyclerView) findViewById(R.id.report_recyclerView);
+            newsAdapter = new NewsAdapter(NewsActivity.this, newsData);
+            newslist.setAdapter(newsAdapter);
+            newslist.setLayoutManager(new LinearLayoutManager(NewsActivity.this));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
     @Override

@@ -1,5 +1,10 @@
 package app.uocssafe.com.uocs_safe.Helper;
 
+import android.app.Activity;
+import android.os.Build;
+import android.view.Window;
+import android.view.WindowManager;
+
 public class AppConfig {
 
     private static String URL_DOMAIN = "http://192.168.137.1/uocs-safe/public/";
@@ -9,9 +14,13 @@ public class AppConfig {
     public static String URL_ReportType = URL_DOMAIN + "api/report_type";
     public static String URL_ReportPost = URL_DOMAIN + "api/report_post";
     public static String URL_GetReport = URL_DOMAIN + "api/get_report";
+    public static String URL_GetSingleReport = URL_DOMAIN + "api/get_single_report";
     public static String URL_RegisterFirebaseKey = URL_DOMAIN + "api/registerUserKey";
-    public static String URL_RegisterGCMKey = URL_DOMAIN + "api/registerUserKey";
     public static String URL_SearchUser = URL_DOMAIN + "api/searchUser";
+    public static String URL_GetComment = URL_DOMAIN + "api/getComment";
+    public static String URL_AddComment = URL_DOMAIN + "api/addComment";
+    public static String URL_TipsCategory = URL_DOMAIN + "api/tips_categories";
+    public static String URL_DetailTips = URL_DOMAIN + "api/get_details_tip";
     public static String PREF_NAME = "uocs-safe";
 
     public static String CHAT_ROOM = URL_DOMAIN + "api/fetchChatRoom";
@@ -37,5 +46,17 @@ public class AppConfig {
     // id to handle the notification in the notification try
     public static final int NOTIFICATION_ID = 100;
     public static final int NOTIFICATION_ID_BIG_IMAGE = 101;
+
+
+        public void changeStatusBarColor(int color, Activity activity){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = activity.getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                window.setStatusBarColor(activity.getResources().getColor(color));
+            }
+
+    }
+
 
 }
