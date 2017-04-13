@@ -38,7 +38,7 @@ public class BaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_uocs);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+//        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -53,8 +53,8 @@ public class BaseActivity extends AppCompatActivity {
                     case R.id.mainmenu:
                         Intent main = new Intent(getApplicationContext(), UOCSActivity.class);
                         startActivity(main);
-                        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-                        toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
+//                        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+//                        toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
 //                        toolbar.setNavigationIcon(getResources().getColor(R.color.colorWhite));
 //                        changeStatusBarColor(R.color.colorYellow, UOCSActivity.class);
                         drawerLayout.closeDrawers();

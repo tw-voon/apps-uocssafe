@@ -54,10 +54,6 @@ public class Emergency_Contact extends BaseActivity implements SearchView.OnQuer
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_emergency_contact, contentFrameLayout);
-//        setContentView(R.layout.activity_emergency_contact);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         myDB = new database_helper(this);
         config = new AppConfig();

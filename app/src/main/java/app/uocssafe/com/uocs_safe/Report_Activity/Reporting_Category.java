@@ -50,10 +50,6 @@ public class Reporting_Category extends BaseActivity {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_reporting__category, contentFrameLayout);
-//        setContentView(R.layout.activity_reporting__category);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         myDB = new database_helper(this);
         config = new AppConfig();
 

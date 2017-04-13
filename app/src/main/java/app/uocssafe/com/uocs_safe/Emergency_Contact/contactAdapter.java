@@ -1,15 +1,21 @@
 package app.uocssafe.com.uocs_safe.Emergency_Contact;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.transition.Visibility;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -28,14 +34,16 @@ public class contactAdapter extends RecyclerView.Adapter<contactAdapter.MyViewHo
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title, contact_no, desc;
-        public final Button callButton;
+        public final ImageButton callButton;
+        public TextView readmore;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.title);
             contact_no = (TextView) itemView.findViewById(R.id.contact);
             desc = (TextView) itemView.findViewById(R.id.desc);
-            callButton = (Button) itemView.findViewById(R.id.call);
+            callButton = (ImageButton) itemView.findViewById(R.id.call);
+            readmore = (TextView) itemView.findViewById(R.id.readmore);
         }
     }
     contactAdapter (ArrayList<Contact> contactList)
@@ -55,7 +63,7 @@ public class contactAdapter extends RecyclerView.Adapter<contactAdapter.MyViewHo
     }
 
     @Override
-    public void onBindViewHolder(contactAdapter.MyViewHolder holder, final int position) {
+    public void onBindViewHolder(final contactAdapter.MyViewHolder holder, final int position) {
         final Contact contact = contactList.get(position);
         holder.title.setText(contact.getTitle());
         holder.contact_no.setText(contact.getContact_no());
@@ -71,6 +79,19 @@ public class contactAdapter extends RecyclerView.Adapter<contactAdapter.MyViewHo
                 Toast.makeText(view.getContext(), "Call to " + contact.getContact_no(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        holder.readmore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(holder.desc.getVisibility() == View.GONE)
+                    holder.desc.setVisibility(View.VISIBLE);
+                else if(holder.desc.getVisibility() == View.VISIBLE)
+                    holder.desc.setVisibility(View.GONE);
+            }
+        });
+
+        ObjectAnimator animation = ObjectAnimator.ofInt(holder.desc, "maxLines", holder.desc.getMaxLines());
+        animation.setDuration(200).start();
     }
 
     @Override

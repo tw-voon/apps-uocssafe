@@ -69,7 +69,6 @@ public class UOCSActivity extends BaseActivity{
         myDB = new database_helper(this);
         session = new Session(this);
         config = new AppConfig();
-        config.changeStatusBarColor(R.color.colorPrimary, UOCSActivity.this);
 
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 //        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
