@@ -132,7 +132,6 @@ public class Emergency_Contact extends BaseActivity implements SearchView.OnQuer
         MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
-
         return true;
     }
 

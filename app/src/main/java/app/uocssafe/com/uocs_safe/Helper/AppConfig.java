@@ -21,6 +21,9 @@ public class AppConfig {
     public static String URL_AddComment = URL_DOMAIN + "api/addComment";
     public static String URL_TipsCategory = URL_DOMAIN + "api/tips_categories";
     public static String URL_DetailTips = URL_DOMAIN + "api/get_details_tip";
+    public static String URL_AddAvatar = URL_DOMAIN + "api/add_avatar";
+    public static String URL_SEARCH_User = URL_DOMAIN + "api/search_user";
+    public static String URL_ADD_CHAT_USER = URL_DOMAIN + "api/add_chat_user";
     public static String PREF_NAME = "uocs-safe";
 
     public static String CHAT_ROOM = URL_DOMAIN + "api/fetchChatRoom";
@@ -46,6 +49,14 @@ public class AppConfig {
     // id to handle the notification in the notification try
     public static final int NOTIFICATION_ID = 100;
     public static final int NOTIFICATION_ID_BIG_IMAGE = 101;
+
+    public String getStaticMap(String lat, String lon){
+        return "http://maps.google.com/maps/api/staticmap?center="
+                + lat + "," + lon+"&markers=icon:http://tinyurl.com/2ftvtt6%7C"+ lat +"," + lon
+                +"&zoom=16&size=400x400&sensor=false";
+    }
+
+
 
 
         public void changeStatusBarColor(int color, Activity activity){

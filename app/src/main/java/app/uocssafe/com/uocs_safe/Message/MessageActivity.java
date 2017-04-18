@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
@@ -65,7 +66,6 @@ public class MessageActivity extends BaseActivity {
 
     RecyclerView messageList;
     MessageAdapter messageAdapter;
-    DatabaseReference userRef;
     Session session;
     ArrayList<ChatRooms> message = new ArrayList<>();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -73,19 +73,23 @@ public class MessageActivity extends BaseActivity {
     private ArrayList<ChatRooms> chatRoomArrayList;
     private MessageAdapter mAdapter;
     private RecyclerView recyclerView;
+    private FloatingActionButton add_user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_message, contentFrameLayout);
-//        setContentView(R.layout.activity_message);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         session = new Session(this);
-        userRef = FirebaseDatabase.getInstance().getReference("chat_room");
         recyclerView = (RecyclerView) findViewById(R.id.message_recycler_view);
+        add_user = (FloatingActionButton) findViewById(R.id.add_chat);
+        add_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MessageActivity.this, SearchAddActivity.class);
+                startActivity(intent);
+            }
+        });
 
         /**
          * Broadcast receiver calls in two scenarios
@@ -191,21 +195,6 @@ public class MessageActivity extends BaseActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-//    public void create_result(){
-//        for (int i = 0; i<10; i++){
-//            Message messages = new Message();
-//            messages.setUsername("User"+i);
-//            messages.setPreviewContent("Sample messages");
-//            messages.setImage_resource(R.drawable.ic_person_outline_black_24dp);
-//            message.add(messages);
-//        }
-//        Log.d("Result", message.toString());
-//        messageList = (RecyclerView) findViewById(R.id.message_recycler_view);
-//        messageAdapter = new MessageAdapter(MessageActivity.this, message);
-//        messageList.setAdapter(messageAdapter);
-//        messageList.setLayoutManager(new LinearLayoutManager(MessageActivity.this));
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -271,7 +260,7 @@ public class MessageActivity extends BaseActivity {
      * fetching the chat rooms by making http call
      */
     private void fetchChatRooms() {
-        StringRequest strReq = new StringRequest(Request.Method.GET,
+        StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.CHAT_ROOM, new Response.Listener<String>() {
 
             @Override
@@ -280,9 +269,10 @@ public class MessageActivity extends BaseActivity {
 
                 try {
                     JSONObject obj = new JSONObject(response);
+                    chatRoomArrayList.clear();
 
                         // check for error flag
-                        if (obj.getBoolean("error") == false) {
+                        if (!obj.optBoolean("error")) {
                         JSONArray chatRoomsArray = obj.getJSONArray("chat_rooms");
                         for (int i = 0; i < chatRoomsArray.length(); i++) {
                             JSONObject chatRoomsObj = (JSONObject) chatRoomsArray.get(i);
@@ -298,7 +288,7 @@ public class MessageActivity extends BaseActivity {
 
                     } else {
                         // error in fetching chat rooms
-                        Toast.makeText(getApplicationContext(), "" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "123" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
                     }
 
                 } catch (JSONException e) {
@@ -319,7 +309,14 @@ public class MessageActivity extends BaseActivity {
                 Log.e("TAG line 326", "Volley error: " + error.getMessage() + ", code: " + networkResponse);
                 Toast.makeText(getApplicationContext(), "Volley error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> map = new HashMap<String,String>();
+                map.put("user_id", session.getUserID());
+                return map;
+            }
+        };
 
         //Adding request to request queue
         uocs_safe.getInstance().addToRequestQueue(strReq);
@@ -361,6 +358,7 @@ public class MessageActivity extends BaseActivity {
 
         // clearing the notification tray
         NotificationUtils.clearNotifications();
+        fetchChatRooms();
     }
 
     @Override

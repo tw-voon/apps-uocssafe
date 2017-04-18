@@ -10,6 +10,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -17,12 +19,17 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -38,6 +45,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,11 +53,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.zip.Inflater;
 
 import app.uocssafe.com.uocs_safe.BaseActivity;
 import app.uocssafe.com.uocs_safe.Helper.AppConfig;
 import app.uocssafe.com.uocs_safe.Message.MessageActivity;
 import app.uocssafe.com.uocs_safe.News.NewsActivity;
+import app.uocssafe.com.uocs_safe.News.SinglePost;
 import app.uocssafe.com.uocs_safe.R;
 import app.uocssafe.com.uocs_safe.Helper.Request_Handler;
 import app.uocssafe.com.uocs_safe.Helper.Session;
@@ -70,6 +80,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     Request_Handler rh = new Request_Handler();
     private MarkerOptions options = new MarkerOptions();
     Session session;
+    SlidingUpPanelLayout upPanelLayout;
+    public HashMap<String, Integer> params = new HashMap<String, Integer>();
+    BottomSheetBehavior bottomSheetBehavior;
+    BottomSheetDialog bottomSheetDialog;
+    TextView title, desc;
+    RelativeLayout bottomsheet;
+    int report_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +94,61 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_maps, contentFrameLayout);
 
+//        bottomSheetDialog = new BottomSheetDialog(MapsActivity.this);
+//        View view1 = getLayoutInflater().inflate(R.layout.bottom_sheet_map, null);
+//        bottomSheetDialog.setContentView(view1);
+
         session = new Session(this);
+
+        title = (TextView) findViewById(R.id.post_title);
+        desc = (TextView) findViewById(R.id.post_description);
+        bottomsheet = (RelativeLayout) findViewById(R.id.bottom_sheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        bottomSheetBehavior.setPeekHeight(0);
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        Log.e("Bottom Sheet Behaviour", "STATE_COLLAPSED");
+                        break;
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        Log.e("Bottom Sheet Behaviour", "STATE_DRAGGING");
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        Log.e("Bottom Sheet Behaviour", "STATE_EXPANDED");
+                        break;
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        Log.e("Bottom Sheet Behaviour", "STATE_HIDDEN");
+                        break;
+                    case BottomSheetBehavior.STATE_SETTLING:
+                        Log.e("Bottom Sheet Behaviour", "STATE_SETTLING");
+                        break;
+                }
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+                bottomSheet.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(event.getAction() == MotionEvent.ACTION_DOWN)
+                            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+                        return true;
+                    }
+                });
+
+            }
+        });
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkLocationPermission();
+        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -158,9 +229,39 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
 //        }
         for (int i = 0; i < locations.size(); i++){
             options.position(new LatLng(locations.get(i).getLatitude(), locations.get(i).getLongitude()))
-                    .title(locations.get(i).getReportTitle()).snippet(locations.get(i).getReportDescription());
-            mMap.addMarker(options);
+                    .title(locations.get(i).getReportTitle())
+                    .snippet(locations.get(i).getReportDescription());
+            Marker mr = mMap.addMarker(options);
+            params.put(mr.getId(), locations.get(i).getReportID());
         }
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            }
+        });
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+
+                if(params.get(marker.getId()) == null){
+                    Toast.makeText(MapsActivity.this, "Current location", Toast.LENGTH_SHORT).show();
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                } else {
+                    Log.d("YES", marker.isInfoWindowShown() + "");
+                    marker.hideInfoWindow();
+                    report_id = params.get(marker.getId());
+                    title.setText(marker.getTitle());
+                    desc.setText(marker.getSnippet());
+                    bottomSheetBehavior.setPeekHeight(60);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+
+                return true;
+            }
+        });
     }
 
     /**
@@ -235,6 +336,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
         }
+
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        bottomSheetBehavior.setPeekHeight(0);
 
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -318,5 +422,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
             // other 'case' lines to check for other permissions this app might request.
             //You can add here other case statements according to your requirement.
         }
+    }
+
+    public void readmore(View view) {
+        Toast.makeText(MapsActivity.this, "Hello", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(MapsActivity.this, SinglePost.class);
+        intent.putExtra("report_ID", String.valueOf(report_id));
+        startActivity(intent);
     }
 }

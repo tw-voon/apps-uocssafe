@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:colorControlNormal" tools:targetApi="lollipop">@color/colorWhite</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
     </style>
 
     <style name="ActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">

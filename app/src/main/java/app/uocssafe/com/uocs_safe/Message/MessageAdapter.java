@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,7 +64,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
         final ChatRooms room = chatRoom.get(position);
         holder.username.setText(room.getName());
         holder.previewMessage.setText(room.getLastMessage());
-        holder.userProfile.setImageResource(R.drawable.ic_person_outline_black_24dp);
+//        holder.userProfile.setImageResource(R.drawable.ic_person_outline_black_24dp);
+        if(room.getAvatarLink() != null)
+            Picasso.with(context).load(room.getAvatarLink()).fit().into(holder.userProfile);
+        else
+            holder.userProfile.setImageResource(R.drawable.ic_person_outline_black_24dp);
 
         if (room.getUnreadCount() > 0) {
             holder.count.setText(String.valueOf(room.getUnreadCount()));
@@ -77,6 +83,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
             @Override
             public void onClick(View v) {
                 Toast.makeText(context, "You have clicked on" + room.getName(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(context, "You have clicked on" + room.getName(), Toast.LENGTH_SHORT).show();
+                return true;
             }
         });
     }

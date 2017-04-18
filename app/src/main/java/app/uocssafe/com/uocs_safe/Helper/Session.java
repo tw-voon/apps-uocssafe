@@ -43,6 +43,13 @@ public class Session {
         editor.commit();
     }
 
+    public void putUserAvatar(String encodeImage){
+        editor.putString("AVATAR", encodeImage);
+        editor.commit();
+    }
+
+    public String getUserAvatar() { return prefs.getString("AVATAR", null); }
+
     public String getFirebaseID(){
         return prefs.getString("firebaseID", null);
     }

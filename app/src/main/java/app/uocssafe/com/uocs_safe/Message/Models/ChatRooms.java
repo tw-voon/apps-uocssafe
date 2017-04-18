@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 
 public class ChatRooms implements Serializable {
-    String id, name, lastMessage, timestamp;
+    String id, name, lastMessage, timestamp, avatarLink;
     int unreadCount;
 
     public ChatRooms(String id, String name, String lastMessage, String timestamp, int unreadCount) {
@@ -17,6 +17,10 @@ public class ChatRooms implements Serializable {
         this.timestamp = timestamp;
         this.unreadCount = unreadCount;
     }
+
+    public void setAvatarLink(String link) { this.avatarLink = link;}
+
+    public String getAvatarLink(){return avatarLink;}
 
     public ChatRooms(){}
 
