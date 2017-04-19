@@ -1,5 +1,6 @@
 package app.uocssafe.com.uocs_safe.login_register;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ public class Login extends AppCompatActivity {
     private Session session;
     private AppConfig config;
     FirebaseDatabase mRef;
+    ProgressDialog loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,11 @@ public class Login extends AppCompatActivity {
 
         config = new AppConfig();
         session = new Session(this);
+        loading = new ProgressDialog(this);
+        loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        loading.setTitle("Signing in...");
+
+        config.changeStatusBarColor(R.color.colorPrimary, Login.this);
 
         txtEmail = (TextView) findViewById(R.id.etUsername);
         txtPassword = (TextView) findViewById(R.id.etPass);
@@ -93,6 +100,7 @@ public class Login extends AppCompatActivity {
 
     private void login() {
 
+        loading.show();
         final String name = txtEmail.getText().toString().trim();
         final String pass = txtPassword.getText().toString().trim();
 
@@ -101,11 +109,13 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         processResponse(response);
+                        loading.dismiss();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        loading.dismiss();
                         Toast.makeText(Login.this, "Line109: " + error.toString() + error.getCause(),Toast.LENGTH_LONG ).show();
                     }
                 }){
@@ -182,4 +192,9 @@ public class Login extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loading.dismiss();
+    }
 }

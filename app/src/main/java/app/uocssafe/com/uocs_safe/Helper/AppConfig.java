@@ -7,7 +7,7 @@ import android.view.WindowManager;
 
 public class AppConfig {
 
-    private static String URL_DOMAIN = "http://192.168.137.1/uocs-safe/public/";
+    private static String URL_DOMAIN = "http://192.168.1.103/uocs-safe/public/";
     public static String URL_LOGIN = URL_DOMAIN + "api/login";
     public static String URL_Register = URL_DOMAIN + "api/register";
     public static String URL_EContacts = URL_DOMAIN + "api/emergency_contact";
@@ -55,9 +55,6 @@ public class AppConfig {
                 + lat + "," + lon+"&markers=icon:http://tinyurl.com/2ftvtt6%7C"+ lat +"," + lon
                 +"&zoom=16&size=400x400&sensor=false";
     }
-
-
-
 
         public void changeStatusBarColor(int color, Activity activity){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +18,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,21 +41,33 @@ public class SearchAddAdapter extends RecyclerView.Adapter<SearchAddAdapter.MyVi
     private ArrayList<NewUser> newUsers = new ArrayList<>();
     public Context context;
     Session session;
+    private AdapterCallback mAdapterCallback;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView username, previewMessage;
+        TextView username, previewMessage, count, timestamp;
         CircleImageView userProfile;
+        CheckBox selected;
         public MyViewHolder(View itemView) {
             super(itemView);
             username = (TextView) itemView.findViewById(R.id.chatUserName);
             previewMessage = (TextView) itemView.findViewById(R.id.previewContentMessage);
             userProfile = (CircleImageView) itemView.findViewById(R.id.profile_image);
+            selected = (CheckBox) itemView.findViewById(R.id.selected);
+            count = (TextView) itemView.findViewById(R.id.count);
+            count.setVisibility(View.GONE);
+            timestamp = (TextView) itemView.findViewById(R.id.timestamp);
+            timestamp.setVisibility(View.GONE);
         }
     }
 
     SearchAddAdapter(Context context,  ArrayList<NewUser> newUsers){
         this.context = context;
         this.newUsers = newUsers;
+        try {
+            this.mAdapterCallback = ((AdapterCallback) context);
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement AdapterCallback.");
+        }
     }
 
     @Override
@@ -62,59 +78,47 @@ public class SearchAddAdapter extends RecyclerView.Adapter<SearchAddAdapter.MyVi
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(final MyViewHolder holder, int position) {
+        final int current = position;
         final NewUser user = newUsers.get(position);
         holder.username.setText(user.getName());
-        Log.d("123", user.getAvatarLink().length() + "");
+        holder.selected.setOnCheckedChangeListener(null);
+        holder.selected.setChecked(user.getSelected());
+
+        holder.selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean is_check) {
+                user.setSelected(is_check);
+                mAdapterCallback.onUserClick(user.getId(), user.getName(), current, user.getSelected());
+            }
+        });
+
         if(user.getAvatarLink().length() != 0)
             Picasso.with(context).load(user.getAvatarLink()).fit().into(holder.userProfile);
         else
             holder.userProfile.setImageResource(R.drawable.ic_person_outline_black_24dp);
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "you have clicked " + user.getName(), Toast.LENGTH_SHORT).show();
-                addUser(user.getId());
+
+                if(!user.getSelected())
+                    user.setSelected(true);
+                else
+                    user.setSelected(false);
+
+                holder.selected.setChecked(user.getSelected());
+                mAdapterCallback.onUserClick(user.getId(), user.getName(), current, user.getSelected());
             }
         });
-    }
-
-
-    private void addUser(final String id) {
-        session = new Session(context);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_ADD_CHAT_USER,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                        Log.d("status", response);
-                        Toast.makeText(context, "Successfully added", Toast.LENGTH_SHORT).show();
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        Toast.makeText(context, "An Error occur, Please try again later", Toast.LENGTH_SHORT).show();
-
-                    }
-                }){
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> map = new HashMap<String, String>();
-                map.put("target_user_id",String.valueOf(id));
-                map.put("user_id", session.getUserID());
-                return map;
-            }
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        requestQueue.add(stringRequest);
     }
 
     @Override
     public int getItemCount() {
         return newUsers.size();
+    }
+
+    public static interface AdapterCallback {
+        void onUserClick(String target_user_id, String name, int position, Boolean is_checked);
     }
 }

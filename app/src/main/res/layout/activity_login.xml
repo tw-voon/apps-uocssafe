@@ -51,6 +51,7 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:descendantFocusability="beforeDescendants"
         android:textColorHint="@color/colorWhite"
         app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout">
 

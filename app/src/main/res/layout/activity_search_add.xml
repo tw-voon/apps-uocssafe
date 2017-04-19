@@ -4,21 +4,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="app.uocssafe.com.uocs_safe.Message.SearchAddActivity">
 
-    <ListView
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:id="@+id/labelGroup"
+        android:layout_height="wrap_content"
+        android:textColorHint="@android:color/darker_gray"
+        app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout">
+
+        <EditText
+            android:id="@+id/etGroupName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="@string/group"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@android:color/darker_gray"
-        android:id="@+id/selectedUser"/>
+        android:layout_marginLeft="10dp"
+        android:text="Selected User:"
+        android:id="@+id/tvSelected"
+        android:layout_below="@+id/labelGroup"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/newuser_recycler_view"
-        android:layout_below="@+id/selectedUser"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:layout_alignParentStart="true"
-        android:padding="10dp"/>
+        <GridView
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:numColumns="auto_fit"
+            android:columnWidth="90dp"
+            android:horizontalSpacing="3dp"
+            android:verticalSpacing="3dp"
+            android:stretchMode="columnWidth"
+            android:layout_below="@id/tvSelected"
+            android:textAlignment="center"
+            android:scrollbars="vertical"
+            android:smoothScrollbar="true"
+            android:gravity="center"
+            android:id="@+id/selectedUser"/>
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/newuser_recycler_view"
+            android:layout_below="@+id/selectedUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="45dp"
+            android:padding="10dp"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_margin="10dp"
+            android:id="@+id/add"
+            android:text="@string/add"
+            android:textColor="@color/colorWhite"
+            android:background="@color/colorPrimary"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true"/>
 </RelativeLayout>

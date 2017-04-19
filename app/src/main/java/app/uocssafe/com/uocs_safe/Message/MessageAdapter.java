@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +35,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView username, previewMessage, timestamp, count;
         CircleImageView userProfile;
+        CheckBox selected;
 
         MyViewHolder(View itemView) {
             super(itemView);
@@ -42,6 +44,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
             userProfile = (CircleImageView) itemView.findViewById(R.id.profile_image);
             timestamp = (TextView) itemView.findViewById(R.id.timestamp);
             count = (TextView) itemView.findViewById(R.id.count);
+            selected = (CheckBox) itemView.findViewById(R.id.selected);
+            selected.setVisibility(View.GONE);
         }
     }
 

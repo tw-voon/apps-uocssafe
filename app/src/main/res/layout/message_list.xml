@@ -58,6 +58,13 @@
                 android:text="Sample Content"
                 android:layout_below="@+id/chatUserName"/>
 
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/timestamp"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/selected"/>
+
         </RelativeLayout>
 
     </LinearLayout>
