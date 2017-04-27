@@ -56,11 +56,11 @@ public class SafetyTipsActivity extends BaseActivity {
             Toast.makeText(SafetyTipsActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
         }
 
-        /*categoryAdapter = new CategoryAdapter(categories);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        categoryList.setLayoutManager(layoutManager);
+        categoryAdapter = new CategoryAdapter(categories);
+        categoryList.setAdapter(categoryAdapter);
+        categoryList.setLayoutManager(new LinearLayoutManager(SafetyTipsActivity.this));
         categoryList.setItemAnimator(new DefaultItemAnimator());
-        categoryList.setAdapter(categoryAdapter);*/
+        categoryList.setNestedScrollingEnabled(false);
 
     }
 
@@ -99,12 +99,6 @@ public class SafetyTipsActivity extends BaseActivity {
                 category.setCategoryName(result.getString("category_name"));
                 categories.add(category);
             }
-
-            categoryAdapter = new CategoryAdapter(categories);
-            categoryList.setAdapter(categoryAdapter);
-            categoryList.setLayoutManager(new LinearLayoutManager(SafetyTipsActivity.this));
-            categoryList.setFocusable(false);
-            categoryList.setNestedScrollingEnabled(false);
             categoryAdapter.notifyDataSetChanged();
 
         } catch (JSONException e) {

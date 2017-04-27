@@ -59,7 +59,7 @@ public class Emergency_Contact extends BaseActivity implements SearchView.OnQuer
         config = new AppConfig();
 
 
-        if(hasInternet.isNetworkStatusAvialable(Emergency_Contact.this))
+        if(internet_helper.isNetworkStatusAvialable(Emergency_Contact.this))
             new AsyncFetch().execute();
         else
             loadOfflineData();

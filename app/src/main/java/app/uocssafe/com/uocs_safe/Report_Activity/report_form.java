@@ -14,12 +14,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.util.*;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +57,7 @@ public class report_form extends BaseActivity implements View.OnClickListener, G
     private Bitmap bitmap;
     String userChoosenTask, userID, userLocation, selectedLongitute, selectedLatitute;
     GoogleApiClient mGoogleApiClient;
+    ProgressDialog loading;
 
     private int REQUEST_CAMERA = 1888, SELECT_FILE = 1;
     Session session;
@@ -68,13 +71,11 @@ public class report_form extends BaseActivity implements View.OnClickListener, G
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_report_form, contentFrameLayout);
-//        setContentView(R.layout.activity_report_form);
-//
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         session = new Session(this);
+        loading = new ProgressDialog(report_form.this);
+        loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        loading.setMessage("Loading map...");
 
         editTitle = (EditText) findViewById(R.id.editTitle);
         description = (EditText) findViewById(R.id.description);
@@ -106,13 +107,12 @@ public class report_form extends BaseActivity implements View.OnClickListener, G
             case R.id.selectPicture:
                 selectImage();
                 break;
-            /*case R.id.edLocation:
-                Toast.makeText(report_form.this, "Constructing", Toast.LENGTH_SHORT).show();
-                break;*/
             case R.id.upload:
+                if(validate_details())
                 uploadImage();
                 break;
             case R.id.edLocation:
+                loading.show();
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 Intent intent;
                 try {
@@ -149,6 +149,7 @@ public class report_form extends BaseActivity implements View.OnClickListener, G
         }
 
         if (requestCode == PLACE_PICKER_CODE && resultCode == RESULT_OK && data != null) {
+            loading.dismiss();
             Place place = PlacePicker.getPlace(this, data);
 
             userLocation = String.format("%s", place.getName());
@@ -229,6 +230,33 @@ public class report_form extends BaseActivity implements View.OnClickListener, G
         byte[] imageBytes = output.toByteArray();
         encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         return encodedImage;
+    }
+
+    private Boolean validate_details(){
+
+        final String title = editTitle.getText().toString().trim();
+        final String desc = description.getText().toString().trim();
+        final String image = getStringImage(bitmap);
+        boolean status = true;
+
+        if(TextUtils.isEmpty(title) || TextUtils.isEmpty(desc) || image.equals("") || userLocation.equals("")){
+            status = false;
+            showMessage();
+        }
+
+        return false;
+    }
+
+    private void showMessage(){
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(report_form.this);
+        alertDialogBuilder.setMessage("Make sure you have input all the field");
+        alertDialogBuilder.setPositiveButton("Login", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alertDialogBuilder.show();
     }
 
     public void uploadImage(){

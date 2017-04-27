@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import app.uocssafe.com.uocs_safe.Emergency_Contact.Contact;
 import app.uocssafe.com.uocs_safe.Helper.AppConfig;
 import app.uocssafe.com.uocs_safe.Helper.GcmIntentService;
 import app.uocssafe.com.uocs_safe.Helper.Session;
@@ -69,6 +70,7 @@ public class UOCSActivity extends BaseActivity{
         myDB = new database_helper(this);
         session = new Session(this);
         config = new AppConfig();
+        Contact contact = new Contact("Manual contact", "0123456789", "sample desc");
 
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 //        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

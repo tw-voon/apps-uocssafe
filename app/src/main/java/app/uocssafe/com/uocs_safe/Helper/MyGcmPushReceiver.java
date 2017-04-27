@@ -1,26 +1,23 @@
-package app.uocssafe.com.uocs_safe.Message;
+package app.uocssafe.com.uocs_safe.Helper;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.gcm.GcmListenerService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import app.uocssafe.com.uocs_safe.Helper.AppConfig;
-import app.uocssafe.com.uocs_safe.Helper.NotificationUtils;
-import app.uocssafe.com.uocs_safe.Helper.Session;
+import app.uocssafe.com.uocs_safe.Message.MessageActivity;
 import app.uocssafe.com.uocs_safe.Message.Models.Messages;
 import app.uocssafe.com.uocs_safe.Message.Models.User;
-import app.uocssafe.com.uocs_safe.uocs_safe;
+import app.uocssafe.com.uocs_safe.News.NewsActivity;
+import app.uocssafe.com.uocs_safe.News.SinglePost;
 
 public class MyGcmPushReceiver extends FirebaseMessagingService {
 
@@ -36,7 +33,7 @@ public class MyGcmPushReceiver extends FirebaseMessagingService {
         JSONObject data;
         JSONObject payload = null;
 
-//        Log.d(TAG, "datass: " + remoteMessage.getData());
+        Log.d(TAG, "datass: " + remoteMessage.getData());
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
@@ -77,45 +74,15 @@ public class MyGcmPushReceiver extends FirebaseMessagingService {
                         // push notification is specific to user
                         processUserMessage(title, isBackground, json.toString());
                         break;
+                    case AppConfig.PUSH_TYPE_COMMENT:
+                        String report_id = json.getString("report_id");
+                        String timestamp = json.getString("created_at");
+                        processComment(title, isBackground, message, report_id, timestamp);
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Exception: " + e.getMessage());
             }
         }
-//        Log.d(TAG, "From: " + from);
-//        Log.d(TAG, "title: " + title);
-//        Log.d(TAG, "isBackground: " + isBackground);
-//        Log.d(TAG, "flag: " + flag);
-//        Log.d(TAG, "data: " + data);
-//        Toast.makeText(getApplicationContext(), "Message received", Toast.LENGTH_SHORT).show();
-//
-//        session = new Session(getApplicationContext());
-//
-//        if (flag == null)
-//            return;
-//
-//        if(session.loggedin()){
-//            // user is not logged in, skipping push notification
-//            Log.e(TAG, "user is not logged in, skipping push notification");
-//            return;
-//        }
-//
-//        if (from.startsWith("/topics/")) {
-//            // message received from some topic.
-//        } else {
-//            // normal downstream message.
-//        }
-//
-//        switch (Integer.parseInt(flag)) {
-//            case AppConfig.PUSH_TYPE_CHATROOM:
-//                // push notification belongs to a chat room
-//                processChatRoomPush(title, isBackground, payload.toString());
-//                break;
-//            case AppConfig.PUSH_TYPE_USER:
-//                // push notification is specific to user
-//                processUserMessage(title, isBackground, payload.toString());
-//                break;
-//        }
     }
 
     private void handleNotification(String message) {
@@ -129,6 +96,13 @@ public class MyGcmPushReceiver extends FirebaseMessagingService {
             NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
             notificationUtils.playNotificationSound();
         }
+    }
+
+    private void processComment(String title, boolean isBackground, String message, String report_id, String timestamp) {
+        session = new Session(getApplicationContext());
+        Intent resultIntent = new Intent(getApplicationContext(), SinglePost.class);
+        resultIntent.putExtra("report_ID", report_id);
+        showNotificationMessage(getApplicationContext(), title, message, timestamp, resultIntent);
     }
 
     /*Processing chat room push message,
@@ -188,6 +162,8 @@ public class MyGcmPushReceiver extends FirebaseMessagingService {
     }
 
     private void processUserMessage(String title, boolean isBackground, String data){
+        session = new Session(getApplicationContext());
+        Log.d("data", data);
         if(!isBackground){
             try{
                 JSONObject dataObj = new JSONObject(data);

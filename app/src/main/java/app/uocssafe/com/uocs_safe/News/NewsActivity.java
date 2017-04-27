@@ -3,13 +3,17 @@ package app.uocssafe.com.uocs_safe.News;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.transition.Visibility;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -39,10 +43,9 @@ import app.uocssafe.com.uocs_safe.uocs_safe;
 
 public class NewsActivity extends BaseActivity implements SearchView.OnQueryTextListener{
 
-    public static final int connection_timeout = 10000;
-    public static final int read_timeout = 15000;
     private RecyclerView newslist;
     private NewsAdapter newsAdapter;
+    ProgressBar loading;
     ArrayList<News> newsData = new ArrayList<>();
     internet_helper hasInternet;
     Request_Handler rh = new Request_Handler();
@@ -52,8 +55,16 @@ public class NewsActivity extends BaseActivity implements SearchView.OnQueryText
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_news, contentFrameLayout);
+        newslist = (RecyclerView) findViewById(R.id.report_recyclerView);
+        loading = (ProgressBar) findViewById(R.id.loading);
+        newslist.setVisibility(View.GONE);
+        loading.setVisibility(View.VISIBLE);
 
-        if(hasInternet.isNetworkStatusAvialable(NewsActivity.this))
+        newsAdapter = new NewsAdapter(NewsActivity.this, newsData);
+        newslist.setAdapter(newsAdapter);
+        newslist.setLayoutManager(new LinearLayoutManager(NewsActivity.this));
+
+        if(internet_helper.isNetworkStatusAvialable(NewsActivity.this))
             getNewsFeed();
         else
             Toast.makeText(NewsActivity.this, "Internet Unavailable", Toast.LENGTH_SHORT).show();
@@ -100,26 +111,27 @@ public class NewsActivity extends BaseActivity implements SearchView.OnQueryText
 
         try {
             JSONArray decodedResult = new JSONArray(result);
+            Log.d("result", result);
             for (int i = 0; i<decodedResult.length(); i++){
                 JSONObject json_data = decodedResult.getJSONObject(i);
-                News news = new News();
-                news.setUsername(json_data.getString("name"));
-                news.setNewsTitle(json_data.getString("report_Title"));
-                news.setDescription(json_data.getString("report_Description"));
-                news.setImageLink(json_data.getString("image"));
-                news.setNewsID(json_data.getString("report_ID"));
-                news.setTimestamp(json_data.getString("created_at"));
+                News news = new News(
+                        json_data.getString("name"),
+                        json_data.getString("report_Title"),
+                        json_data.getString("report_Description"),
+                        json_data.getString("image"),
+                        json_data.getString("report_ID"),
+                        json_data.getString("created_at"),
+                        json_data.getString("location_name"),
+                        json_data.getString("avatar_link")
+                );
                 newsData.add(news);
+                newsAdapter.notifyDataSetChanged();
             }
-
-            newslist = (RecyclerView) findViewById(R.id.report_recyclerView);
-            newsAdapter = new NewsAdapter(NewsActivity.this, newsData);
-            newslist.setAdapter(newsAdapter);
-            newslist.setLayoutManager(new LinearLayoutManager(NewsActivity.this));
+            newslist.setVisibility(View.VISIBLE);
+            loading.setVisibility(View.GONE);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
 

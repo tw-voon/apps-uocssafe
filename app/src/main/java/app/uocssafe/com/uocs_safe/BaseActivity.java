@@ -47,6 +47,7 @@ import app.uocssafe.com.uocs_safe.Helper.AppConfig;
 import app.uocssafe.com.uocs_safe.Helper.Session;
 import app.uocssafe.com.uocs_safe.Message.MessageActivity;
 import app.uocssafe.com.uocs_safe.News.NewsActivity;
+import app.uocssafe.com.uocs_safe.Personal.PersonalActivity;
 import app.uocssafe.com.uocs_safe.Virtual_map.MapsActivity;
 import app.uocssafe.com.uocs_safe.login_register.Login;
 import app.uocssafe.com.uocs_safe.safety_tips.SafetyTipsActivity;
@@ -69,7 +70,6 @@ public class BaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_uocs);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -114,10 +114,6 @@ public class BaseActivity extends AppCompatActivity {
                     case R.id.mainmenu:
                         Intent main = new Intent(getApplicationContext(), UOCSActivity.class);
                         startActivity(main);
-//                        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-//                        toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
-//                        toolbar.setNavigationIcon(getResources().getColor(R.color.colorWhite));
-//                        changeStatusBarColor(R.color.colorYellow, UOCSActivity.class);
                         drawerLayout.closeDrawers();
                         break;
 
@@ -125,7 +121,6 @@ public class BaseActivity extends AppCompatActivity {
                         Intent map = new Intent(getApplicationContext(), MapsActivity.class);
                         startActivity(map);
                         toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-//                        changeStatusBarColor(R.color.colorPrimaryDark);
                         drawerLayout.closeDrawers();
                         break;
 
@@ -133,7 +128,6 @@ public class BaseActivity extends AppCompatActivity {
                         Intent news = new Intent(getApplicationContext(), NewsActivity.class);
                         startActivity(news);
                         toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-//                        changeStatusBarColor(R.color.colorPrimaryDark);
                         drawerLayout.closeDrawers();
                         break;
 
@@ -141,15 +135,19 @@ public class BaseActivity extends AppCompatActivity {
                         Intent message = new Intent(getApplicationContext(), MessageActivity.class);
                         startActivity(message);
                         toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-//                        changeStatusBarColor(R.color.colorPrimaryDark);
                         drawerLayout.closeDrawers();
                         break;
 
                     case R.id.tips:
                         Intent safetytips = new Intent(getApplicationContext(), SafetyTipsActivity.class);
                         startActivity(safetytips);
-                        toolbar.setBackgroundColor(getResources().getColor(R.color.colorOrange));
-//                        changeStatusBarColor(R.color.colorOrange);
+                        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                        drawerLayout.closeDrawers();
+                        break;
+
+                    case R.id.personal:
+                        Intent personal = new Intent(getApplicationContext(), PersonalActivity.class);
+                        startActivity(personal);
                         drawerLayout.closeDrawers();
                         break;
 
@@ -259,7 +257,6 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
         actionBarDrawerToggle.syncState();
     }
 }

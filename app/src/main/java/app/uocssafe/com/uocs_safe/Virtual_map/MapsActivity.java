@@ -45,7 +45,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -80,7 +79,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     Request_Handler rh = new Request_Handler();
     private MarkerOptions options = new MarkerOptions();
     Session session;
-    SlidingUpPanelLayout upPanelLayout;
     public HashMap<String, Integer> params = new HashMap<String, Integer>();
     BottomSheetBehavior bottomSheetBehavior;
     BottomSheetDialog bottomSheetDialog;

@@ -5,22 +5,23 @@
     android:layout_marginBottom="5dp"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="#000"
-        android:id="@+id/tips_name"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#000"
+            android:id="@+id/tips_name"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:id="@+id/tips_desc"/>
-    
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="20dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:id="@+id/tips_desc"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
 
 </LinearLayout>

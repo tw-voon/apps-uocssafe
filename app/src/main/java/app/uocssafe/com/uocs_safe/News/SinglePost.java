@@ -91,7 +91,7 @@ public class SinglePost extends BaseActivity{
             }
         });
 
-        commentAdapter = new CommentAdapter(comments);
+        commentAdapter = new CommentAdapter(SinglePost.this, comments);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         commentlist.setLayoutManager(layoutManager);
         commentlist.setItemAnimator(new DefaultItemAnimator());
@@ -117,12 +117,14 @@ public class SinglePost extends BaseActivity{
                             jsonArray = new JSONArray(response);
                             JSONObject result = jsonArray.getJSONObject(0);
 
-                            CommentModel comment = new CommentModel();
-                            comment.setMsgID(result.getInt("id"));
-                            comment.setCommentmsg(result.getString("comment_msg"));
-                            comment.setTimeago(result.getString("created_at"));
-                            comment.setUserID(result.getInt("user_id"));
-                            comment.setUsername(result.getString("name"));
+                            CommentModel comment = new CommentModel(
+                                    result.getString("name"),
+                                    result.getString("comment_msg"),
+                                    result.getString("created_at"),
+                                    result.getInt("user_id"),
+                                    result.getInt("id"),
+                                    result.getString("avatar_link")
+                            );
                             comments.add(comment);
 
                             commentAdapter.notifyDataSetChanged();
@@ -238,14 +240,15 @@ public class SinglePost extends BaseActivity{
                 for(int i = 0; i < jsonArray.length(); i++){
 
                     JSONObject result = jsonArray.getJSONObject(i);
-                    CommentModel comment = new CommentModel();
-                    comment.setMsgID(result.getInt("id"));
-                    comment.setCommentmsg(result.getString("comment_msg"));
-                    comment.setTimeago(result.getString("created_at"));
-                    comment.setUserID(result.getInt("user_id"));
-                    comment.setUsername(result.getString("name"));
+                    CommentModel comment = new CommentModel(
+                            result.getString("name"),
+                            result.getString("comment_msg"),
+                            result.getString("created_at"),
+                            result.getInt("user_id"),
+                            result.getInt("id"),
+                            result.getString("avatar_link")
+                    );
                     comments.add(comment);
-
                 }
                 commentAdapter.notifyDataSetChanged();
                 no_comment.setVisibility(View.GONE);
@@ -273,7 +276,10 @@ public class SinglePost extends BaseActivity{
             location.setText(locate);
             username.setText(result.getString("name"));
             title.setText(result.getString("report_Title"));
-            user_profile.setImageResource(R.drawable.ic_person_outline_black_24dp);
+            if(result.getString("avatar_link").equals(""))
+                user_profile.setImageResource(R.drawable.ic_person_outline_black_24dp);
+            else
+                Picasso.with(SinglePost.this).load(result.getString("avatar_link")).into(user_profile);
             Picasso.with(SinglePost.this).load(result.getString("image")).fit().into(pic);
             timestamp.setText(result.getString("created_at"));
 
@@ -282,37 +288,6 @@ public class SinglePost extends BaseActivity{
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    public void prepareData(){
-
-        CommentModel comment = new CommentModel("Admin", "Wow", "3", 1, 1);
-        comments.add(comment);
-
-        comment = new CommentModel("Admin", "Wow", "3", 1, 1);
-        comments.add(comment);
-
-        comment = new CommentModel("Admin", "Wow", "3", 1, 1);
-        comments.add(comment);
-
-        comment = new CommentModel("Admin", "Wow", "3", 1, 1);
-        comments.add(comment);
-
-        comment = new CommentModel("Admin", "Wow", "3", 1, 1);
-        comments.add(comment);
-
-        comment = new CommentModel("Admin", "Wow", "3", 1, 1);
-        comments.add(comment);
-
-//        commentAdapter.notifyDataSetChanged();
-
-        commentAdapter = new CommentAdapter(comments);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        commentlist.setLayoutManager(layoutManager);
-        commentlist.setItemAnimator(new DefaultItemAnimator());
-        commentlist.setAdapter(commentAdapter);
-        commentlist.setFocusable(false);
-
     }
 }
 

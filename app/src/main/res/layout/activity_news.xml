@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="false"
+    android:background="@color/bg_bubble_self"
     tools:context="app.uocssafe.com.uocs_safe.News.NewsActivity">
 
     <!--<ScrollView-->
@@ -15,6 +16,13 @@
         <!--android:paddingLeft="10dp"-->
         <!--android:paddingRight="10dp"-->
         <!--android:scrollbars="vertical">-->
+    <ProgressBar
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:indeterminate="true"
+        android:id="@+id/loading"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/report_recyclerView"

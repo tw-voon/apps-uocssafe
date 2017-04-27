@@ -2,7 +2,21 @@ package app.uocssafe.com.uocs_safe.News;
 
 public class News {
 
-    private String username, title, description, imageLink, newsID, timestamp;
+    private String username, title, description, imageLink, newsID, timestamp, location_name, avatar_link;
+
+    public News(
+            String username, String title, String description, String imageLink, String newsID,
+            String timestamp, String location_name, String avatar_link
+    ) {
+        this.username = username;
+        this.title = title;
+        this.description = description;
+        this.imageLink = imageLink;
+        this.newsID = newsID;
+        this.timestamp = timestamp;
+        this.location_name = location_name;
+        this.avatar_link = avatar_link;
+    }
 
     public String getUsername(){
         return username;
@@ -24,6 +38,10 @@ public class News {
 
     public String getNewsID() { return newsID; }
 
+    public String getLocation_name(){ return location_name;}
+
+    public String getAvatar_link(){return avatar_link;}
+
     public void setUsername(String username){
         this.username = username;
     }
@@ -43,5 +61,7 @@ public class News {
     }
 
     public void setNewsID(String newsID){ this.newsID = newsID; }
+
+    public void setLocation_name(String location_name){this.location_name = location_name;}
 
 }

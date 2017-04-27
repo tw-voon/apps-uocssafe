@@ -50,6 +50,7 @@ public class DetailsTipsActivity extends BaseActivity {
         detailsView.setLayoutManager(layoutManager);
         detailsView.setItemAnimator(new DefaultItemAnimator());
         detailsView.setAdapter(detailsAdapter);
+        detailsView.setNestedScrollingEnabled(false);
 
         if(internet_helper.isNetworkStatusAvialable(DetailsTipsActivity.this)){
             getDetailsTips(category_id);

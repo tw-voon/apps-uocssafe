@@ -32,10 +32,6 @@ import java.util.List;
 import app.uocssafe.com.uocs_safe.R;
 import app.uocssafe.com.uocs_safe.uocs_safe;
 
-/**
- * Created by Shi Chee on 12-Mar-17.
- */
-
 public class NotificationUtils {
 
     private Context mContext;
@@ -81,16 +77,16 @@ public class NotificationUtils {
     private void showSmallNotification(NotificationCompat.Builder mBuilder, int icon, String title, String message, String timeStamp, PendingIntent resultPendingIntent, Uri alarmSound){
 
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-        if(AppConfig.appendNotificationMessages){
-            uocs_safe.getInstance().getPrefManager().addNotification(message);
-            String oldNotification = uocs_safe.getInstance().getPrefManager().getNotifications();
-            List<String> messages = Arrays.asList(oldNotification.split("\\|"));
-            for (int i = messages.size() - 1; i>=0; i--){
-                inboxStyle.addLine(messages.get(i));
-            }
-        } else {
-            inboxStyle.addLine(message);
-        }
+//        if(AppConfig.appendNotificationMessages){
+//            uocs_safe.getInstance().getPrefManager().addNotification(message);
+//            String oldNotification = uocs_safe.getInstance().getPrefManager().getNotifications();
+//            List<String> messages = Arrays.asList(oldNotification.split("\\|"));
+//            for (int i = messages.size() - 1; i>=0; i--){
+//                inboxStyle.addLine(messages.get(i));
+//            }
+//        } else {
+//            inboxStyle.addLine(message);
+//        }
 
         Notification notification;
         notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)

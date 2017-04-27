@@ -174,7 +174,7 @@ public class MessageActivity extends BaseActivity {
         } else if (type == AppConfig.PUSH_TYPE_USER) {
             // push belongs to user alone
             // just showing the message in a toast
-            Message message = (Message) intent.getSerializableExtra("message");
+            Messages message = (Messages) intent.getSerializableExtra("message");
             Toast.makeText(getApplicationContext(), "New push: " + message.getMessage(), Toast.LENGTH_LONG).show();
         }
     }

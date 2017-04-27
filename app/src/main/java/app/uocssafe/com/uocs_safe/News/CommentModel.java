@@ -1,15 +1,16 @@
 package app.uocssafe.com.uocs_safe.News;
 
 public class CommentModel {
-    private String username, commentmsg, timeago;
+    private String username, commentmsg, timeago, avatar_link;
     private int userID, msgID;
 
-    CommentModel(String username, String message, String timeago, int userID, int msgID){
+    CommentModel(String username, String message, String timeago, int userID, int msgID, String avatar_link){
         this.userID = userID;
         this.username = username;
         this.msgID = msgID;
         this.commentmsg = message;
         this.timeago = timeago;
+        this.avatar_link = avatar_link;
     }
 
     CommentModel(){}
@@ -31,6 +32,8 @@ public class CommentModel {
     public String getTimeago() { return timeago; }
 
     public int getUserID(){ return userID; }
+
+    public String getAvatar_link(){return avatar_link;}
 
     public int getMsgID(){ return msgID; }
 }

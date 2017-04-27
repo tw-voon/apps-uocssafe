@@ -178,7 +178,7 @@ public class ChatRoomActivity extends BaseActivity {
                     JSONObject obj = new JSONObject(response);
 
                     // check for error
-                    if (obj.getBoolean("error") == false) {
+                    if (!obj.optBoolean("error")) {
                         JSONObject commentObj = obj.getJSONObject("message");
                         JSONObject dObj = commentObj.getJSONObject("data");
                         JSONObject mObj = dObj.getJSONObject("message");
@@ -272,7 +272,7 @@ public class ChatRoomActivity extends BaseActivity {
                     JSONObject obj = new JSONObject(response);
 
                     // check for error
-                    if (!obj.getBoolean("error")) {
+                    if (!obj.optBoolean("error")) {
                         JSONArray commentsObj = obj.getJSONArray("messages");
 
                         for (int i = 0; i < commentsObj.length(); i++) {
@@ -283,10 +283,6 @@ public class ChatRoomActivity extends BaseActivity {
                             String createdAt = commentObj.getString("created_at");
                             String userId = commentObj.getString("id");
                             String userName = commentObj.getString("name");
-
-//                            JSONObject userObj = commentObj.getJSONObject("user");
-//                            String userId = userObj.getString("user_id");
-//                            String userName = userObj.getString("username");
                             User user = new User(userId, userName);
 
                             Messages message = new Messages();

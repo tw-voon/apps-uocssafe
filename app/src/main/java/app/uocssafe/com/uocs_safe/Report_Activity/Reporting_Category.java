@@ -17,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -75,6 +76,7 @@ import app.uocssafe.com.uocs_safe.Helper.Utility;
 import app.uocssafe.com.uocs_safe.R;
 import app.uocssafe.com.uocs_safe.Helper.database_helper;
 import app.uocssafe.com.uocs_safe.Helper.internet_helper;
+import app.uocssafe.com.uocs_safe.UOCSActivity;
 
 import static android.R.attr.bitmap;
 
@@ -99,6 +101,7 @@ public class Reporting_Category extends BaseActivity
     final static int PLACE_PICKER_CODE = 1000, REQUEST_CAMERA = 1888, SELECT_FILE = 1, PICK_IMAGE_REQUEST = 2;
     private ArrayList<String> categoryData;
     private Bitmap bitmap;
+    ProgressDialog loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +113,8 @@ public class Reporting_Category extends BaseActivity
         config = new AppConfig();
         session = new Session(this);
         userID = session.getUserID();
+        loading = new ProgressDialog(Reporting_Category.this);
+        loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
         /*Link variable to XML*/
         categorySpinner = (Spinner) findViewById(R.id.category);
@@ -133,7 +138,42 @@ public class Reporting_Category extends BaseActivity
             loadOfflineData();
     }
 
+    private Boolean validate_details(){
+
+        final String title = postTitle.getText().toString().trim();
+        final String desc = postTitle.getText().toString().trim();
+        boolean status = true;
+
+        if(TextUtils.isEmpty(title) || TextUtils.isEmpty(desc) || bitmap == null || userLocation.equals("")){
+            status = false;
+            showMessage();
+        }
+
+        return status;
+    }
+
+    private void showMessage(){
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Reporting_Category.this);
+        alertDialogBuilder.setMessage("Make sure you have input all the field");
+        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alertDialogBuilder.show();
+    }
+
     public void submit(View view) {
+        if(validate_details())
+            UploadtoServer();
+    }
+
+    private void UploadtoServer(){
+
+        loading.setMessage("Uploading...");
+        loading.setCancelable(true);
+        loading.show();
 
         final String title = postTitle.getText().toString().trim();
         final String desc = postDesc.getText().toString().trim();
@@ -143,9 +183,14 @@ public class Reporting_Category extends BaseActivity
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        if(response.equals("Success"))
-                            Toast.makeText(Reporting_Category.this,"Success uploaded to server", Toast.LENGTH_LONG).show();
+                        if(response.equals("Success")) {
+                            loading.dismiss();
+                            Toast.makeText(Reporting_Category.this, "Success uploaded to server", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(Reporting_Category.this, UOCSActivity.class);
+                            startActivity(intent);
+                        }
                         else
+                            loading.dismiss();
                             Toast.makeText(Reporting_Category.this, "Error uploading to server", Toast.LENGTH_SHORT).show();
                     }
                 },
@@ -153,7 +198,7 @@ public class Reporting_Category extends BaseActivity
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        loading.dismiss();
                         Toast.makeText(Reporting_Category.this, "An Error occur, Please try again later", Toast.LENGTH_SHORT).show();
 
                     }
@@ -175,15 +220,18 @@ public class Reporting_Category extends BaseActivity
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
-
     }
 
     public void selectLocation(View view) {
+        loading.setMessage("Loading map...");
+        loading.setCancelable(true);
+        loading.show();
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
         Intent intent;
         try {
             intent = builder.build(Reporting_Category.this);
             startActivityForResult(intent, PLACE_PICKER_CODE);
+            loading.dismiss();
         } catch (GooglePlayServicesRepairableException e) {
             e.printStackTrace();
         } catch (GooglePlayServicesNotAvailableException e) {
@@ -308,7 +356,7 @@ public class Reporting_Category extends BaseActivity
     }
 
     public String getStringImage(Bitmap bmp){
-        Log.d("bmp----------------", bmp.toString());
+        Log.d("bmp----------------", bmp.toString() + "");
         String encodedImage;
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, output);

@@ -183,13 +183,12 @@
         </activity>
 
         <service
-            android:name=".Message.MyGcmPushReceiver"
+            android:name=".Helper.MyGcmPushReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service android:name=".Helper.MyInstanceIDListenerService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -201,7 +200,14 @@
         <activity android:name=".News.SinglePost" />
         <activity android:name=".safety_tips.SafetyTipsActivity" />
         <activity android:name=".safety_tips.DetailsTipsActivity" />
-        <activity android:name=".Message.SearchAddActivity"></activity>
+        <activity android:name=".Message.SearchAddActivity" />
+        <activity
+            android:name=".Personal.PersonalActivity"
+            android:label="Profile">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".UOCSActivity" />
+        </activity>
     </application>
 
 </manifest>

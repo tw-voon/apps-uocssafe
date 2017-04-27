@@ -19,10 +19,6 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Shi Chee on 13-Mar-17.
- */
-
 public class MyInstanceIDListenerService extends FirebaseInstanceIdService {
 
     /**
@@ -42,8 +38,6 @@ public class MyInstanceIDListenerService extends FirebaseInstanceIdService {
         session.putFirebaseID(refreshedToken);
         Log.d("token42: ", refreshedToken + " ");
         sendRegistrationToServer(refreshedToken);
-//        Intent intent = new Intent (this, GcmIntentService.class);
-//        startService(intent);
     }
 
     private void sendRegistrationToServer(final String token){
@@ -66,7 +60,6 @@ public class MyInstanceIDListenerService extends FirebaseInstanceIdService {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getApplicationContext(),"line68: " + error.toString() + error.getCause(),Toast.LENGTH_LONG ).show();
-
                     }
                 }){
             @Override

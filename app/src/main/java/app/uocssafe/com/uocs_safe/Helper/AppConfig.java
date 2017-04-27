@@ -7,7 +7,7 @@ import android.view.WindowManager;
 
 public class AppConfig {
 
-    private static String URL_DOMAIN = "http://192.168.1.103/uocs-safe/public/";
+    private static String URL_DOMAIN = "http://192.168.137.1/uocs-safe/public/";
     public static String URL_LOGIN = URL_DOMAIN + "api/login";
     public static String URL_Register = URL_DOMAIN + "api/register";
     public static String URL_EContacts = URL_DOMAIN + "api/emergency_contact";
@@ -24,6 +24,8 @@ public class AppConfig {
     public static String URL_AddAvatar = URL_DOMAIN + "api/add_avatar";
     public static String URL_SEARCH_User = URL_DOMAIN + "api/search_user";
     public static String URL_ADD_CHAT_USER = URL_DOMAIN + "api/add_chat_user";
+    public static String URL_GET_OWN_REPORT = URL_DOMAIN + "api/get_user_report";
+    public static String URL_GET_OWN_ACTIVITY = URL_DOMAIN + "api/fetch_user_activity";
     public static String PREF_NAME = "uocs-safe";
 
     public static String CHAT_ROOM = URL_DOMAIN + "api/fetchChatRoom";
@@ -45,6 +47,7 @@ public class AppConfig {
     // type of push messages
     public static final int PUSH_TYPE_CHATROOM = 1;
     public static final int PUSH_TYPE_USER = 2;
+    public static final int PUSH_TYPE_COMMENT = 3;
 
     // id to handle the notification in the notification try
     public static final int NOTIFICATION_ID = 100;
