@@ -14,7 +14,15 @@
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:scaleType="fitXY"
-        android:src="@drawable/actionbar_header_darkprimary"/>
+        android:src="@drawable/actionbar_header_primary"/>
+
+    <ProgressBar
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:indeterminate="true"
+        android:id="@+id/loading"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/contact_recycler_view"

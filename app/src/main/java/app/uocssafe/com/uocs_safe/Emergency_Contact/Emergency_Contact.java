@@ -14,7 +14,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -48,25 +50,31 @@ public class Emergency_Contact extends BaseActivity implements SearchView.OnQuer
     database_helper myDB;
     internet_helper hasInternet;
     AppConfig config;
+    ProgressBar loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_emergency_contact, contentFrameLayout);
+        loading = (ProgressBar) findViewById(R.id.loading);
 
         myDB = new database_helper(this);
         config = new AppConfig();
 
+        contactList = (RecyclerView) findViewById(R.id.contact_recycler_view);
+        contactAdapter = new contactAdapter(Emergency_Contact.this, data);
+        contactList.setAdapter(contactAdapter);
+        contactList.setLayoutManager(new LinearLayoutManager(Emergency_Contact.this));
 
-        if(internet_helper.isNetworkStatusAvialable(Emergency_Contact.this))
-            new AsyncFetch().execute();
-        else
+        contactList.setVisibility(View.GONE);
+
+        if(internet_helper.isNetworkStatusAvialable(Emergency_Contact.this)) {
             loadOfflineData();
-//            Toast.makeText(Emergency_Contact.this, "Network not available", Toast.LENGTH_SHORT).show();
-        //call to AsyncTask
-
-    }
+            new AsyncFetch().execute();
+        } else
+            loadOfflineData();
+        }
 
     @Override
     public boolean onSupportNavigateUp(){
@@ -78,7 +86,7 @@ public class Emergency_Contact extends BaseActivity implements SearchView.OnQuer
 
         Cursor res = myDB.getOfflineData("api/emergency_contact", "GET");
         if(res.getCount() == 0){
-            showMessage("No offline data found");
+//            showMessage("No offline data found");
             return;
         }
 
@@ -91,6 +99,7 @@ public class Emergency_Contact extends BaseActivity implements SearchView.OnQuer
         String buffers = buffer.toString();
         try {
             JSONArray jArray = new JSONArray(buffers);
+            data.clear();
 
             for(int i=0; i<jArray.length(); i++)
             {
@@ -101,27 +110,17 @@ public class Emergency_Contact extends BaseActivity implements SearchView.OnQuer
                 contactdata.setDesc(json_data.getString("contact_description"));
                 data.add(contactdata);
             }
-
-//            Toast.makeText(Emergency_Contact.this, "Loading view" + response_code, Toast.LENGTH_SHORT).show();
-            contactList = (RecyclerView) findViewById(R.id.contact_recycler_view);
-            contactAdapter = new contactAdapter(Emergency_Contact.this, data);
-            contactList.setAdapter(contactAdapter);
-            contactList.setLayoutManager(new LinearLayoutManager(Emergency_Contact.this));
+            loading.setVisibility(View.GONE);
+            contactList.setVisibility(View.VISIBLE);
+            contactAdapter.notifyDataSetChanged();
 
         } catch (JSONException e){
             e.printStackTrace();
+            loading.setVisibility(View.GONE);
             Toast.makeText(Emergency_Contact.this, "Fail to load from database", Toast.LENGTH_SHORT).show();
             Toast.makeText(Emergency_Contact.this, "Error \n" + e.toString(), Toast.LENGTH_LONG).show();
         }
 
-    }
-
-    public void processActivity(ArrayList<Contact> data) {
-        Toast.makeText(Emergency_Contact.this, "Loading view" + response_code, Toast.LENGTH_SHORT).show();
-        contactList = (RecyclerView) findViewById(R.id.contact_recycler_view);
-        contactAdapter = new contactAdapter(Emergency_Contact.this, data);
-        contactList.setAdapter(contactAdapter);
-        contactList.setLayoutManager(new LinearLayoutManager(Emergency_Contact.this));
     }
 
     @Override
@@ -176,7 +175,6 @@ public class Emergency_Contact extends BaseActivity implements SearchView.OnQuer
     private class AsyncFetch extends AsyncTask<String, String, String>
     {
 
-        ProgressDialog loading = new ProgressDialog(Emergency_Contact.this);
         HttpURLConnection connection;
         URL url = null;
         AppConfig config = new AppConfig();
@@ -186,9 +184,6 @@ public class Emergency_Contact extends BaseActivity implements SearchView.OnQuer
         {
             super.onPreExecute();
 
-            loading.setMessage("Loading");
-            loading.setCancelable(false);
-            loading.show();
         }
         @Override
         protected String doInBackground(String... strings) {
@@ -243,12 +238,13 @@ public class Emergency_Contact extends BaseActivity implements SearchView.OnQuer
 
         @Override
         protected void onPostExecute(String result) {
-            loading.dismiss();
+            loading.setVisibility(View.GONE);
             Log.d("MyActivity", result);
             try {
                 if(response_code == 200)
                     myDB.insertData(result, "api/emergency_contact", "GET");
                 JSONArray jArray = new JSONArray(result);
+                data.clear();
 
                 for(int i=0; i<jArray.length(); i++)
                 {
@@ -261,12 +257,13 @@ public class Emergency_Contact extends BaseActivity implements SearchView.OnQuer
                     data.add(contact);
 
                 }
-
-                processActivity(data);
+                contactAdapter.notifyDataSetChanged();
+                contactList.setVisibility(View.VISIBLE);
+//                processActivity(data);
 
 
             } catch (JSONException error) {
-
+                loading.setVisibility(View.GONE);
                 //                Toast.makeText(Emergency_Contact.this, "Unknown Error Occur" + error.toString(), Toast.LENGTH_SHORT).show();
                 Toast.makeText(Emergency_Contact.this, "Loading Offline Data", Toast.LENGTH_SHORT).show();
                 loadOfflineData();

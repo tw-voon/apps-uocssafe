@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,7 @@ public class MyReportFragment extends Fragment{
     MyReportAdapter myReportAdapter;
     ArrayList<MyReportModel> data = new ArrayList<>();
     Session session;
+    ProgressBar loading;
 //    private PersonalActivity.OpenBottomSheet openBottomSheet;
 
     @Override
@@ -76,6 +78,8 @@ public class MyReportFragment extends Fragment{
             my_report_list.setAdapter(myReportAdapter);
             my_report_list.setLayoutManager(new LinearLayoutManager(getActivity()));
             my_report_list.setNestedScrollingEnabled(false);
+            loading = (ProgressBar) getView().findViewById(R.id.loading);
+            my_report_list.setVisibility(View.GONE);
         } else
             Toast.makeText(getActivity(), "No view found", Toast.LENGTH_SHORT).show();
         session = new Session(getActivity());
@@ -111,6 +115,12 @@ public class MyReportFragment extends Fragment{
         requestQueue.add(stringRequest);
     }
 
+    public void myFragmentDataFromActivity(String report_id) {
+
+        // do your stuff
+
+    }
+
     private void processReport(String response){
 
         try {
@@ -124,11 +134,13 @@ public class MyReportFragment extends Fragment{
                         jsonObject.getString("report_Title"),
                         jsonObject.getString("reason"),
                         jsonObject.getString("action_taken"),
-                        jsonObject.getString("report_ID"),
+                        jsonObject.getString("id"),
                         jsonObject.getString("name"));
                 data.add(myReportModel);
             }
+            loading.setVisibility(View.GONE);
             myReportAdapter.notifyDataSetChanged();
+            my_report_list.setVisibility(View.VISIBLE);
         } catch (JSONException e) {
             e.printStackTrace();
         }

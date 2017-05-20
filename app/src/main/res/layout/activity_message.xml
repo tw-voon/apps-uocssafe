@@ -7,6 +7,15 @@
     android:layout_height="match_parent"
     tools:context="app.uocssafe.com.uocs_safe.Message.MessageActivity">
 
+    <ProgressBar
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        android:id="@+id/loading"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"/>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/message_recycler_view"
             android:layout_width="match_parent"

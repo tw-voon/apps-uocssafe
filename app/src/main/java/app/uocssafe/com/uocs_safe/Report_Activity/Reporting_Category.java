@@ -135,7 +135,7 @@ public class Reporting_Category extends BaseActivity
         if(internet_helper.isNetworkStatusAvialable(Reporting_Category.this))
             getSpinnerData();
         else
-            loadOfflineData();
+            showMessage("No internet connection", "This feature required internet connection");
     }
 
     private Boolean validate_details(){
@@ -191,7 +191,7 @@ public class Reporting_Category extends BaseActivity
                         }
                         else
                             loading.dismiss();
-                            Toast.makeText(Reporting_Category.this, "Error uploading to server", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(Reporting_Category.this, "Error uploading to server", Toast.LENGTH_SHORT).show();
                     }
                 },
 
@@ -265,12 +265,10 @@ public class Reporting_Category extends BaseActivity
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
             Uri uri = data.getData();
             try {
-//                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-//                 Log.d("bitmap", String.valueOf(bitmap));
                 Uri imageUri = data.getData();
                 InputStream imageStream = getContentResolver().openInputStream(imageUri);
                 bitmap = BitmapFactory.decodeStream(imageStream);
-                bitmap = getResizedBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2);
+                bitmap = getResizedBitmap(bitmap, bitmap.getWidth() / 5, bitmap.getHeight() / 5);
                 imagePreview.setImageBitmap(bitmap);
                 imagePreview.setVisibility(View.VISIBLE);
             } catch (IOException e) {
@@ -368,7 +366,7 @@ public class Reporting_Category extends BaseActivity
     private void galleryIntent(){
         Intent intent = new Intent();
         intent.setType("image/*");
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
         intent.setAction(Intent.ACTION_GET_CONTENT);//
         startActivityForResult(Intent.createChooser(intent, "Select File"),PICK_IMAGE_REQUEST);
     }
@@ -392,6 +390,7 @@ public class Reporting_Category extends BaseActivity
                     @Override
                     public void onResponse(String response) {
                         processCategory(response);
+                        Log.d("spinner", response);
                     }
                 },
 
@@ -400,7 +399,7 @@ public class Reporting_Category extends BaseActivity
                     public void onErrorResponse(VolleyError error) {
 
                         Toast.makeText(Reporting_Category.this, "An Error occur, Please try again later", Toast.LENGTH_SHORT).show();
-
+                        Log.d("spinner", error.toString());
                     }
                 }){
             @Override
@@ -426,7 +425,7 @@ public class Reporting_Category extends BaseActivity
                 JSONObject json_data = jArray.getJSONObject(i);
                 Category category = new Category();
                 category.setCategoryName(json_data.getString("typeName"));
-                category.setCategoryID(json_data.getString("typeID"));
+                category.setCategoryID(json_data.getString("id"));
                 category.setCategoryIcon(R.mipmap.ic_launcher);
                 categoryData.add(json_data.getString("typeName"));
                 data.add(category);
@@ -451,174 +450,11 @@ public class Reporting_Category extends BaseActivity
 
     }
 
-    private class AsyncFetch extends AsyncTask<String, String, String>
-    {
-
-        ProgressDialog loading = new ProgressDialog(Reporting_Category.this);
-        HttpURLConnection connection;
-        URL url = null;
-
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-
-            loading.setMessage("Loading");
-            loading.setCancelable(false);
-            loading.show();
-        }
-        @Override
-        protected String doInBackground(String... strings) {
-
-            try {
-                url = new URL(config.URL_ReportType);
-            } catch (MalformedURLException e){
-                e.printStackTrace();
-                return e.toString();
-            }
-
-            try {
-
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setReadTimeout(read_timeout);
-                connection.setConnectTimeout(connection_timeout);
-                connection.setRequestMethod("GET");
-
-            } catch (IOException error){
-
-                error.printStackTrace();
-                return error.toString();
-
-            }
-
-            try {
-                response_code = connection.getResponseCode();
-
-                if(response_code == HttpURLConnection.HTTP_OK) {
-                    InputStream input = connection.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-                    StringBuilder result = new StringBuilder();
-                    String line;
-
-                    while((line = reader.readLine())!= null){
-                        result.append(line);
-                    }
-
-                    return (result.toString());
-                }
-                else {
-                    return ("unsuccessful");
-                }
-            } catch (IOException error){
-                error.printStackTrace();
-                return error.toString();
-            } finally {
-                connection.disconnect();
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            loading.dismiss();
-            loading.dismiss();
-//            showMessage(result);
-
-            try {
-                if(response_code == 200)
-                    myDB.insertData(result, "api/report_categories", "GET");
-                JSONArray jArray = new JSONArray(result);
-
-                for(int i=0; i<jArray.length(); i++)
-                {
-
-                    JSONObject json_data = jArray.getJSONObject(i);
-                    Category category = new Category();
-                    category.setCategoryName(json_data.getString("typeName"));
-                    category.setCategoryID(json_data.getString("typeID"));
-                    category.setCategoryIcon(R.mipmap.ic_launcher);
-//                    category.setDesc(json_data.getString("contact_description"));
-                    data.add(category);
-
-                }
-
-                processActivity(data);
-
-
-            } catch (JSONException error) {
-
-                //                Toast.makeText(Emergency_Contact.this, "Unknown Error Occur" + error.toString(), Toast.LENGTH_SHORT).show();
-                Toast.makeText(Reporting_Category.this, "Loading Offline Data", Toast.LENGTH_SHORT).show();
-                loadOfflineData();
-            }
-        }
-    }
-
-    public void showMessage(String result){
+    public void showMessage(String title, String result){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setCancelable(true);
-        alert.setTitle("Result from server");
+        alert.setTitle(title);
         alert.setMessage(result);
         alert.show();
     }
-
-    public void processActivity(final ArrayList<Category> data) {
-        Toast.makeText(Reporting_Category.this, "Loading view", Toast.LENGTH_SHORT).show();
-        gridView = (GridView) findViewById(R.id.category_grid);
-        CategoryAdapter adapter = new CategoryAdapter(Reporting_Category.this, R.layout.single_category ,data);
-        gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                adapterView.getSelectedItem();
-                Category category = data.get(i);
-                Toast.makeText(Reporting_Category.this, "You have clicked on " + category.getCategoryName(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent("app.uocssafe.com.uocs_safe.Report_Activity.report_form");
-                intent.putExtra("CATEGORY_ID", category.getCategoryID());
-                intent.putExtra("CATEGORY_NAME", category.getCategoryName());
-                startActivity(intent);
-
-            }
-        });
-    }
-
-    public void loadOfflineData(){
-
-        Cursor res = myDB.getOfflineData("api/report_categories", "GET");
-        if(res.getCount() == 0){
-            showMessage("No offline data found");
-            return;
-        }
-
-        StringBuilder buffer = new StringBuilder();
-        while(res.moveToNext())
-        {
-            buffer.append(res.getString(3));
-        }
-//        showMessage(buffer.toString());
-        String buffers = buffer.toString();
-        try {
-            JSONArray jArray = new JSONArray(buffers);
-
-            for(int i=0; i<jArray.length(); i++)
-            {
-                JSONObject json_data = jArray.getJSONObject(i);
-                Category category = new Category();
-                category.setCategoryName(json_data.getString("typeName"));
-                category.setCategoryName(json_data.getString("typeID"));
-                category.setCategoryIcon(R.mipmap.ic_launcher);
-                data.add(category);
-            }
-
-//            Toast.makeText(Emergency_Contact.this, "Loading view" + response_code, Toast.LENGTH_SHORT).show();
-            processActivity(data);
-
-        } catch (JSONException e){
-            e.printStackTrace();
-            Toast.makeText(Reporting_Category.this, "Fail to load from database", Toast.LENGTH_SHORT).show();
-            Toast.makeText(Reporting_Category.this, "Error \n" + e.toString(), Toast.LENGTH_LONG).show();
-        }
-
-    }
-
 }

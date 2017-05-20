@@ -1,4 +1,6 @@
 <resources>
+
+    <!--Navigational bar-->
     <string name="app_name">UOCS-Safe</string>
     <string name="main">Main Menu</string>
     <string name="message">Message</string>
@@ -44,6 +46,11 @@
     <string name="send">Send</string>
     <string name="comment">Comments:</string>
     <string name="no_comment">No comment found on this post</string>
+
+    <!-- status bar-->
+    <string name="status">Status: </string>
+    <string name="reason">Reason: </string>
+    <string name="action">Action Taken: </string>
 
     <!--Sample String-->
     <string name="dummy_text">

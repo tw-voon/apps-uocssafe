@@ -18,6 +18,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +44,7 @@ import java.util.Map;
 import app.uocssafe.com.uocs_safe.BaseActivity;
 import app.uocssafe.com.uocs_safe.Helper.AppConfig;
 import app.uocssafe.com.uocs_safe.Helper.Session;
+import app.uocssafe.com.uocs_safe.Helper.StatusBottomSheetDialogFragment;
 import app.uocssafe.com.uocs_safe.Helper.internet_helper;
 import app.uocssafe.com.uocs_safe.R;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -51,13 +54,17 @@ public class SinglePost extends BaseActivity{
     private List<CommentModel> comments;
     private RecyclerView commentlist;
     private CommentAdapter commentAdapter;
+    private String status, reason, action;
     internet_helper hasInternet;
     TextView desc, location, title, username, no_comment, timestamp;
     Button btnsendComment;
     EditText edtcomment;
-    ImageView pic;
+    ImageView pic, extraoption;
     CircleImageView user_profile;
     Session session;
+    RelativeLayout inforpart, commentsection;
+    LinearLayout sendComment;
+    ProgressBar loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +82,16 @@ public class SinglePost extends BaseActivity{
         username = (TextView) findViewById(R.id.username);
         user_profile =(CircleImageView) findViewById(R.id.profile_image);
         pic = (ImageView) findViewById(R.id.heroImageView);
+        extraoption = (ImageView) findViewById(R.id.extraoption);
+        extraoption.setVisibility(View.VISIBLE);
         no_comment = (TextView) findViewById(R.id.no_comment);
         btnsendComment = (Button) findViewById(R.id.btn_send);
         edtcomment = (EditText) findViewById(R.id.message);
         timestamp = (TextView) findViewById(R.id.timestamp);
+        commentsection = (RelativeLayout) findViewById(R.id.commentsection);
+        inforpart = (RelativeLayout) findViewById(R.id.info_part);
+        sendComment = (LinearLayout) findViewById(R.id.sendComment);
+        loading = (ProgressBar) findViewById(R.id.loading);
 
         btnsendComment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +101,15 @@ public class SinglePost extends BaseActivity{
                     Toast.makeText(getApplicationContext(), "Enter a message", Toast.LENGTH_SHORT).show();
                 } else
                 addComment(report_ID, msg);
+            }
+        });
+
+        extraoption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StatusBottomSheetDialogFragment bottomSheetDialogFragment = new StatusBottomSheetDialogFragment();
+                bottomSheetDialogFragment.setData(status, reason, action);
+                bottomSheetDialogFragment.show(getSupportFragmentManager(), "Dialog");
             }
         });
 
@@ -260,13 +282,19 @@ public class SinglePost extends BaseActivity{
 //                sendComment.set
             }
 
+            commentsection.setVisibility(View.VISIBLE);
+            sendComment.setVisibility(View.VISIBLE);
+
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        loading.setVisibility(View.GONE);
     }
 
     private void processPost(String response) {
+        Log.d("single", response);
         try{
             JSONArray jsonArray = new JSONArray(response);
             JSONObject result = jsonArray.getJSONObject(0);
@@ -276,14 +304,40 @@ public class SinglePost extends BaseActivity{
             location.setText(locate);
             username.setText(result.getString("name"));
             title.setText(result.getString("report_Title"));
-            if(result.getString("avatar_link").equals(""))
-                user_profile.setImageResource(R.drawable.ic_person_outline_black_24dp);
+            if(result.getString("avatar_link").equals("null"))
+                user_profile.setImageResource(R.drawable.head_1);
             else
                 Picasso.with(SinglePost.this).load(result.getString("avatar_link")).into(user_profile);
-            Picasso.with(SinglePost.this).load(result.getString("image")).fit().into(pic);
+            Picasso.with(SinglePost.this).load(result.getString("image")).into(pic);
             timestamp.setText(result.getString("created_at"));
 
-            getComment(result.getString("report_ID"));
+            switch (result.getString("status_id")){
+                case "1":
+                    status = "Approved";
+                    break;
+
+                case "2":
+                    status = "Canceled";
+                    break;
+
+                case "3":
+                    status = "Pending";
+                    break;
+            }
+
+            reason = result.getString("reason");
+            action = result.getString("action_taken");
+
+            inforpart.setVisibility(View.VISIBLE);
+            if(result.getString("approve_status").equals("1")) {
+                getComment(result.getString("ids"));
+            }
+            else{
+                commentsection.setVisibility(View.GONE);
+                sendComment.setVisibility(View.GONE);
+                loading.setVisibility(View.GONE);
+            }
+
 
         } catch (JSONException e) {
             e.printStackTrace();

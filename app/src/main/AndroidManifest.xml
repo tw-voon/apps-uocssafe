@@ -84,20 +84,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="app.uocssafe.com.uocs_safe.UOCSActivity" />
         </activity>
-        <activity
-            android:name=".Report_Activity.report_form"
-            android:label="Report Activity"
-            android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="app.uocssafe.com.uocs_safe.Report_Activity.report_form" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="app.uocssafe.com.uocs_safe.Report_Activity.Reporting_Category" />
-        </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -196,7 +182,7 @@
         </service>
 
         <activity android:name=".Message.ChatRoomActivity" />
-        <activity android:name=".BaseActivity" />
+        <activity android:name=".BaseActivity" android:theme="@style/AppTheme"/>
         <activity android:name=".News.SinglePost" />
         <activity android:name=".safety_tips.SafetyTipsActivity" />
         <activity android:name=".safety_tips.DetailsTipsActivity" />

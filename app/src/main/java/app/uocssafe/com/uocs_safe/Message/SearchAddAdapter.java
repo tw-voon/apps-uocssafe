@@ -93,7 +93,7 @@ public class SearchAddAdapter extends RecyclerView.Adapter<SearchAddAdapter.MyVi
             }
         });
 
-        if(user.getAvatarLink().length() != 0)
+        if(!user.getAvatarLink().equals("null"))
             Picasso.with(context).load(user.getAvatarLink()).fit().into(holder.userProfile);
         else
             holder.userProfile.setImageResource(R.drawable.ic_person_outline_black_24dp);

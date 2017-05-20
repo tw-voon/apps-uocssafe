@@ -296,13 +296,14 @@ public class ChatRoomActivity extends BaseActivity {
 
                         mAdapter.notifyDataSetChanged();
                         if (mAdapter.getItemCount() > 1) {
-                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
+//                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
+                            recyclerView.getLayoutManager().scrollToPosition(mAdapter.getItemCount() - 1);
                         }
 
                     } else {
                         if(obj.getBoolean("error"))
                             Toast.makeText(getApplicationContext(), "No message in this room", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getApplicationContext(), "" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
+//                        Toast.makeText(getApplicationContext(), "" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
                     }
 
                 } catch (JSONException e) {

@@ -30,10 +30,18 @@ public class Session {
         editor.commit();
     }
 
-    public void putData(String userID, String username){
+    public void setPermission(String key, boolean permission){
+        editor.putBoolean(key,permission);
+        editor.commit();
+    }
+
+    public boolean getPermission(String key){return prefs.getBoolean(key, false);}
+
+    public void putData(String userID, String username, String avatar){
 
         editor.putString("userID", userID);
         editor.putString("username", username);
+        editor.putString("avatar_link", avatar);
         editor.commit();
 
     }

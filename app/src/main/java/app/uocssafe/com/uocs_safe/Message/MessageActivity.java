@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -75,6 +76,7 @@ public class MessageActivity extends BaseActivity {
     private MessageAdapter mAdapter;
     private RecyclerView recyclerView;
     private FloatingActionButton add_user;
+    private ProgressBar loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,8 @@ public class MessageActivity extends BaseActivity {
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_message, contentFrameLayout);
         session = new Session(this);
+        loading = (ProgressBar) findViewById(R.id.loading);
+        loading.setVisibility(View.VISIBLE);
         recyclerView = (RecyclerView) findViewById(R.id.message_recycler_view);
         add_user = (FloatingActionButton) findViewById(R.id.add_chat);
         add_user.setOnClickListener(new View.OnClickListener() {
@@ -286,7 +290,9 @@ public class MessageActivity extends BaseActivity {
 
                             chatRoomArrayList.add(cr);
                         }
-
+                            recyclerView.setVisibility(View.VISIBLE);
+                            mAdapter.notifyDataSetChanged();
+                            loading.setVisibility(View.GONE);
                     } else {
                         // error in fetching chat rooms
                         Toast.makeText(getApplicationContext(), "123" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
@@ -359,6 +365,8 @@ public class MessageActivity extends BaseActivity {
 
         // clearing the notification tray
         NotificationUtils.clearNotifications();
+//        loading.setVisibility(View.VISIBLE);
+//        recyclerView.setVisibility(View.GONE);
         fetchChatRooms();
     }
 

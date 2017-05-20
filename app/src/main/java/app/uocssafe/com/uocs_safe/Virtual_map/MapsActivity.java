@@ -56,6 +56,8 @@ import java.util.zip.Inflater;
 
 import app.uocssafe.com.uocs_safe.BaseActivity;
 import app.uocssafe.com.uocs_safe.Helper.AppConfig;
+import app.uocssafe.com.uocs_safe.Helper.MapBottomSheetDialogFragment;
+import app.uocssafe.com.uocs_safe.Helper.StatusBottomSheetDialogFragment;
 import app.uocssafe.com.uocs_safe.Message.MessageActivity;
 import app.uocssafe.com.uocs_safe.News.NewsActivity;
 import app.uocssafe.com.uocs_safe.News.SinglePost;
@@ -100,49 +102,49 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
 
         title = (TextView) findViewById(R.id.post_title);
         desc = (TextView) findViewById(R.id.post_description);
-        bottomsheet = (RelativeLayout) findViewById(R.id.bottom_sheet);
-        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        bottomSheetBehavior.setPeekHeight(0);
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
-                switch (newState) {
-                    case BottomSheetBehavior.STATE_COLLAPSED:
-                        Log.e("Bottom Sheet Behaviour", "STATE_COLLAPSED");
-                        break;
-                    case BottomSheetBehavior.STATE_DRAGGING:
-                        Log.e("Bottom Sheet Behaviour", "STATE_DRAGGING");
-                        break;
-                    case BottomSheetBehavior.STATE_EXPANDED:
-                        Log.e("Bottom Sheet Behaviour", "STATE_EXPANDED");
-                        break;
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        Log.e("Bottom Sheet Behaviour", "STATE_HIDDEN");
-                        break;
-                    case BottomSheetBehavior.STATE_SETTLING:
-                        Log.e("Bottom Sheet Behaviour", "STATE_SETTLING");
-                        break;
-                }
-
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-                bottomSheet.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if(event.getAction() == MotionEvent.ACTION_DOWN)
-                            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-                        return true;
-                    }
-                });
-
-            }
-        });
+//        bottomsheet = (RelativeLayout) findViewById(R.id.bottom_sheet);
+//        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+//        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+//        bottomSheetBehavior.setPeekHeight(0);
+//        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+//            @Override
+//            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+//
+//                switch (newState) {
+//                    case BottomSheetBehavior.STATE_COLLAPSED:
+//                        Log.e("Bottom Sheet Behaviour", "STATE_COLLAPSED");
+//                        break;
+//                    case BottomSheetBehavior.STATE_DRAGGING:
+//                        Log.e("Bottom Sheet Behaviour", "STATE_DRAGGING");
+//                        break;
+//                    case BottomSheetBehavior.STATE_EXPANDED:
+//                        Log.e("Bottom Sheet Behaviour", "STATE_EXPANDED");
+//                        break;
+//                    case BottomSheetBehavior.STATE_HIDDEN:
+//                        Log.e("Bottom Sheet Behaviour", "STATE_HIDDEN");
+//                        break;
+//                    case BottomSheetBehavior.STATE_SETTLING:
+//                        Log.e("Bottom Sheet Behaviour", "STATE_SETTLING");
+//                        break;
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+//
+//                bottomSheet.setOnTouchListener(new View.OnTouchListener() {
+//                    @Override
+//                    public boolean onTouch(View v, MotionEvent event) {
+//                        if(event.getAction() == MotionEvent.ACTION_DOWN)
+//                            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+//
+//                        return true;
+//                    }
+//                });
+//
+//            }
+//        });
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
@@ -180,7 +182,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
             @Override
             protected void onPostExecute(String result) {
                 loading.dismiss();
-                Toast.makeText(MapsActivity.this, result, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MapsActivity.this, result, Toast.LENGTH_SHORT).show();
 
                 try {
                     JSONArray decodedResult = new JSONArray(result);
@@ -189,12 +191,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
                         Locations location = new Locations();
                         location.setLatitude(json_data.getDouble("location_latitute"));
                         location.setLongitude(json_data.getDouble("location_longitute"));
-                        location.setReportID(json_data.getInt("report_ID"));
+                        location.setReportID(json_data.getInt("ids"));
                         location.setReportTitle(json_data.getString("report_Title"));
                         location.setReportDescription(json_data.getString("report_Description"));
                         locations.add(location);
                     }
-
                     addMarkerOnMap(locations);
 
                 } catch (JSONException e) {
@@ -236,7 +237,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+//                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
         });
 
@@ -246,15 +247,18 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
 
                 if(params.get(marker.getId()) == null){
                     Toast.makeText(MapsActivity.this, "Current location", Toast.LENGTH_SHORT).show();
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+//                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 } else {
                     Log.d("YES", marker.isInfoWindowShown() + "");
                     marker.hideInfoWindow();
                     report_id = params.get(marker.getId());
-                    title.setText(marker.getTitle());
-                    desc.setText(marker.getSnippet());
-                    bottomSheetBehavior.setPeekHeight(60);
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+//                    title.setText(marker.getTitle());
+//                    desc.setText(marker.getSnippet());
+                    MapBottomSheetDialogFragment bottomSheetDialogFragment = new MapBottomSheetDialogFragment();
+                    bottomSheetDialogFragment.setData(marker.getTitle(), marker.getSnippet(), report_id);
+                    bottomSheetDialogFragment.show(getSupportFragmentManager(), "Dialog");
+//                    bottomSheetBehavior.setPeekHeight(60);
+//                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
 
                 return true;
@@ -319,11 +323,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Log.d("map_fail", i + " ");
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+        Log.d("map_fail", connectionResult.toString());
 
     }
 
@@ -335,8 +341,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
             mCurrLocationMarker.remove();
         }
 
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        bottomSheetBehavior.setPeekHeight(0);
+//        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+//        bottomSheetBehavior.setPeekHeight(0);
 
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -424,8 +430,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
 
     public void readmore(View view) {
         Toast.makeText(MapsActivity.this, "Hello", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(MapsActivity.this, SinglePost.class);
-        intent.putExtra("report_ID", String.valueOf(report_id));
-        startActivity(intent);
+//        Intent intent = new Intent(MapsActivity.this, SinglePost.class);
+//        intent.putExtra("report_ID", String.valueOf(report_id));
+//        startActivity(intent);
     }
 }

@@ -13,6 +13,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import app.uocssafe.com.uocs_safe.Message.ChatRoomActivity;
 import app.uocssafe.com.uocs_safe.Message.MessageActivity;
 import app.uocssafe.com.uocs_safe.Message.Models.Messages;
 import app.uocssafe.com.uocs_safe.Message.Models.User;
@@ -148,7 +149,7 @@ public class MyGcmPushReceiver extends FirebaseMessagingService {
                     notificationUtils.playNotificationSound();
                 } else {
                     // app is in background. show the message in notification try
-                    Intent resultIntent = new Intent(getApplicationContext(), MessageActivity.class);
+                    Intent resultIntent = new Intent(getApplicationContext(), ChatRoomActivity.class);
                     resultIntent.putExtra("chat_room_id", chatRoomId);
                     showNotificationMessage(getApplicationContext(), title, user.getName() + " : " + message.getMessage(), message.getCreated_at(), resultIntent);
                 }

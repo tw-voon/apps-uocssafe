@@ -2,6 +2,7 @@ package app.uocssafe.com.uocs_safe;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -33,6 +35,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,11 +90,15 @@ public class BaseActivity extends AppCompatActivity {
             user_name.setText("Guest User");
         else
             user_name.setText(session.getUsername());
-
-        if(session.getUserAvatar() == null)
+        Log.d("profile", "not avatar"+session.getUserAvatar());
+        if(session.getUserAvatar().equals("null")) {
             user_profile.setImageResource(R.drawable.head_1);
+            Log.d("profile", "not avatar");
+        }
         else
-            user_profile.setImageBitmap(decodeBase64(session.getUserAvatar()));
+            Picasso.with(getApplicationContext()).load(session.getUserAvatar()).into(user_profile);
+
+//        Log.d("avatar", session.getUserAvatar());
 
         user_profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +106,7 @@ public class BaseActivity extends AppCompatActivity {
 
                 Intent intent = new Intent();
                 intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
                 intent.setAction(Intent.ACTION_GET_CONTENT);//
                 startActivityForResult(Intent.createChooser(intent, "Select File"),PICK_PROFILE_IMAGE);
 
@@ -118,24 +125,33 @@ public class BaseActivity extends AppCompatActivity {
                         break;
 
                     case R.id.map:
-                        Intent map = new Intent(getApplicationContext(), MapsActivity.class);
-                        startActivity(map);
-                        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-                        drawerLayout.closeDrawers();
+
+                        if(check_access()){
+                            Intent map = new Intent(getApplicationContext(), MapsActivity.class);
+                            startActivity(map);
+                            toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                            drawerLayout.closeDrawers();
+                        }
+
                         break;
 
                     case R.id.news:
-                        Intent news = new Intent(getApplicationContext(), NewsActivity.class);
-                        startActivity(news);
-                        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-                        drawerLayout.closeDrawers();
+
+                        if(check_access()) {
+                            Intent news = new Intent(getApplicationContext(), NewsActivity.class);
+                            startActivity(news);
+                            toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                            drawerLayout.closeDrawers();
+                        }
                         break;
 
                     case R.id.message:
-                        Intent message = new Intent(getApplicationContext(), MessageActivity.class);
-                        startActivity(message);
-                        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-                        drawerLayout.closeDrawers();
+                        if(check_access()) {
+                            Intent message = new Intent(getApplicationContext(), MessageActivity.class);
+                            startActivity(message);
+                            toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                            drawerLayout.closeDrawers();
+                        }
                         break;
 
                     case R.id.tips:
@@ -146,16 +162,18 @@ public class BaseActivity extends AppCompatActivity {
                         break;
 
                     case R.id.personal:
-                        Intent personal = new Intent(getApplicationContext(), PersonalActivity.class);
-                        startActivity(personal);
-                        drawerLayout.closeDrawers();
+                        if(check_access()) {
+                            Intent personal = new Intent(getApplicationContext(), PersonalActivity.class);
+                            startActivity(personal);
+                            drawerLayout.closeDrawers();
+                        }
                         break;
 
                     case R.id.out:
-                        session.setLoggedin(false);
-                        Intent out = new Intent(getApplicationContext(), Login.class);
-                        startActivity(out);
-                        drawerLayout.closeDrawers();
+                        if(check_access()) {
+                            logout();
+                            drawerLayout.closeDrawers();
+                        }
                         break;
                 }
                 return false;
@@ -180,6 +198,46 @@ public class BaseActivity extends AppCompatActivity {
         return imageEncoded;
     }
 
+    public boolean check_access(){
+        if(!session.loggedin()){
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(BaseActivity.this);
+            alertDialogBuilder.setMessage("You need to login before proceed to this section");
+            alertDialogBuilder.setPositiveButton("Login", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(getApplicationContext(),Login.class));
+                }
+            });
+            alertDialogBuilder.show();
+            return false;
+        } else {
+            Log.d("logging?", session.loggedin() + "?");
+            return true;
+        }
+    }
+
+    public boolean logout(){
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(BaseActivity.this);
+            alertDialogBuilder.setMessage("Are you sure want to log out?");
+            alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    session.setLoggedin(false);
+                    session.clearPreference();
+                    Intent out = new Intent(getApplicationContext(), Login.class);
+                    startActivity(out);
+                }
+            });
+            alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            alertDialogBuilder.show();
+            return true;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -187,9 +245,11 @@ public class BaseActivity extends AppCompatActivity {
         if (requestCode == PICK_PROFILE_IMAGE && resultCode == RESULT_OK) {
             Bitmap bitmap = null;
             Uri uri = data.getData();
+            Log.d("url", uri.toString());
             try {
                 Uri imageUri = data.getData();
                 InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                Log.d("result228", imageStream.toString() + " ");
                 bitmap = BitmapFactory.decodeStream(imageStream);
                 bitmap = getResizedBitmap(bitmap, bitmap.getWidth() / 4, bitmap.getHeight() / 4);
                 profileImage.setImageBitmap(bitmap);
@@ -197,7 +257,7 @@ public class BaseActivity extends AppCompatActivity {
                 session.putUserAvatar(encodeTobase64(bitmap));
                 uploadAvatar();
             } catch (IOException e) {
-                Log.d("bitmapE", String.valueOf(bitmap));
+                Log.d("bitmapE", String.valueOf(e));
                 e.printStackTrace();
             }
         }
@@ -214,6 +274,7 @@ public class BaseActivity extends AppCompatActivity {
                             JSONObject result = new JSONObject(response);
                             if(result.getString("status").equals("success")){
                                 Toast.makeText(BaseActivity.this,"Successfully uploaded profile image",Toast.LENGTH_LONG ).show();
+                                session.putUserAvatar(result.getString("avatar"));
                             }
                             else Toast.makeText(BaseActivity.this,"Fail to upload profile image",Toast.LENGTH_LONG ).show();
                         } catch (JSONException e) {

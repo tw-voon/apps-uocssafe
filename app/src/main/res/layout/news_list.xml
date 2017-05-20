@@ -104,8 +104,7 @@
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:minHeight="100dp"
+                android:layout_height="wrap_content"
                 android:src="@color/colorPrimary"
                 android:adjustViewBounds="true"
                 android:layout_below="@+id/description"

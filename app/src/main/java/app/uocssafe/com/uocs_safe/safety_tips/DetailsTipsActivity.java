@@ -1,11 +1,14 @@
 package app.uocssafe.com.uocs_safe.safety_tips;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -26,6 +29,7 @@ import java.util.Map;
 
 import app.uocssafe.com.uocs_safe.BaseActivity;
 import app.uocssafe.com.uocs_safe.Helper.AppConfig;
+import app.uocssafe.com.uocs_safe.Helper.database_helper;
 import app.uocssafe.com.uocs_safe.Helper.internet_helper;
 import app.uocssafe.com.uocs_safe.R;
 
@@ -34,6 +38,9 @@ public class DetailsTipsActivity extends BaseActivity {
     private List<DetailModel> detailModelList;
     private RecyclerView detailsView;
     private DetailsAdapter detailsAdapter;
+    database_helper mydb;
+    String local_url;
+    TextView status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,7 @@ public class DetailsTipsActivity extends BaseActivity {
         getLayoutInflater().inflate(R.layout.activity_details_tips, contentFrameLayout);
         int category_id = getIntent().getIntExtra("category_id",0);
         Log.d("result: ", String.valueOf(category_id) + " ");
+        local_url = "api/get_details/"+category_id;
 
         detailModelList = new ArrayList<>();
         detailsView = (RecyclerView) findViewById(R.id.detailList);
@@ -51,12 +59,56 @@ public class DetailsTipsActivity extends BaseActivity {
         detailsView.setItemAnimator(new DefaultItemAnimator());
         detailsView.setAdapter(detailsAdapter);
         detailsView.setNestedScrollingEnabled(false);
+        mydb = new database_helper(DetailsTipsActivity.this);
+        status = (TextView) findViewById(R.id.status);
 
         if(internet_helper.isNetworkStatusAvialable(DetailsTipsActivity.this)){
+            loadOfflineData();
             getDetailsTips(category_id);
         } else{
+            loadOfflineData();
             Toast.makeText(DetailsTipsActivity.this, "Internet not available", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void loadOfflineData(){
+
+        Cursor res = mydb.getOfflineData(local_url, "GET");
+        if(res.getCount() == 0){
+            Toast.makeText(getApplicationContext(), "No offline data available", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        StringBuilder buffer = new StringBuilder();
+        while(res.moveToNext())
+        {
+            buffer.append(res.getString(3));
+        }
+//        showMessage(buffer.toString());
+        String buffers = buffer.toString();
+        try {
+            JSONArray jArray = new JSONArray(buffers);
+            detailModelList.clear();
+
+            for(int i=0; i<jArray.length(); i++)
+            {
+                JSONObject result = jArray.getJSONObject(i);
+                DetailModel model = new DetailModel(result.getString("tip_name"), result.getString("tip_desc"));
+                detailModelList.add(model);
+            }
+
+            if(jArray.length() == 0 && !internet_helper.isNetworkStatusAvialable(DetailsTipsActivity.this)){
+                status.setVisibility(View.VISIBLE);
+                detailsView.setVisibility(View.GONE);
+            } else status.setVisibility(View.GONE);
+
+            detailsAdapter.notifyDataSetChanged();
+        } catch (JSONException e){
+            e.printStackTrace();
+            Toast.makeText(DetailsTipsActivity.this, "Fail to load from database", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DetailsTipsActivity.this, "Error \n" + e.toString(), Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private void getDetailsTips(final int category_id) {
@@ -66,6 +118,7 @@ public class DetailsTipsActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response) {
 
+                        mydb.insertData(response, local_url, "GET");
                         processNews(response);
 
                     }
@@ -94,12 +147,20 @@ public class DetailsTipsActivity extends BaseActivity {
     private void processNews(String response) {
         Log.d("Reponse: ", response);
         try {
+            detailModelList.clear();
             JSONArray jsonArray = new JSONArray(response);
+
             for(int i = 0 ; i < jsonArray.length(); i++){
                 JSONObject result = jsonArray.getJSONObject(i);
                 DetailModel model = new DetailModel(result.getString("tip_name"), result.getString("tip_desc"));
                 detailModelList.add(model);
             }
+
+            if(jsonArray.length() == 0){
+                status.setVisibility(View.VISIBLE);
+                detailsView.setVisibility(View.GONE);
+            } else status.setVisibility(View.GONE);
+
             detailsAdapter.notifyDataSetChanged();
         } catch (JSONException e) {
             e.printStackTrace();

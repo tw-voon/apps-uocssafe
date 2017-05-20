@@ -1,8 +1,10 @@
 package app.uocssafe.com.uocs_safe.Personal;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +12,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import app.uocssafe.com.uocs_safe.Helper.Session;
+import app.uocssafe.com.uocs_safe.News.SinglePost;
 import app.uocssafe.com.uocs_safe.R;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -51,6 +56,7 @@ public class MyReportAdapter extends RecyclerView.Adapter<MyReportAdapter.MyView
             imgMoreOption = (ImageView) itemView.findViewById(R.id.more_option);
             profile_image = (CircleImageView) itemView.findViewById(R.id.profile_image);
         }
+
     }
 
     @Override
@@ -69,7 +75,7 @@ public class MyReportAdapter extends RecyclerView.Adapter<MyReportAdapter.MyView
         if(session.getUserAvatar() == null)
             holder.profile_image.setImageResource(R.drawable.head_1);
         else
-            holder.profile_image.setImageBitmap(decodeBase64(session.getUserAvatar()));
+            Picasso.with(context).load(session.getUserAvatar()).into(holder.profile_image);
 
         holder.timestamp.setText(model.getTimestamp());
         holder.title.setText(model.getTitle());
@@ -82,6 +88,15 @@ public class MyReportAdapter extends RecyclerView.Adapter<MyReportAdapter.MyView
         } else if(model.getStatus().equals("Canceled")){
             holder.imgStatus.setImageResource(R.drawable.status_cancel);
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context.getApplicationContext(), SinglePost.class);
+                intent.putExtra("report_ID", model.getPost_id());
+                context.startActivity(intent);
+            }
+        });
 
         holder.imgMoreOption.setOnClickListener(new View.OnClickListener() {
             @Override

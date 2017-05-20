@@ -1,5 +1,7 @@
 package app.uocssafe.com.uocs_safe.Message;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.MenuItemCompat;
@@ -64,6 +66,7 @@ public class SearchAddActivity extends BaseActivity
     TextInputLayout textInputLayout;
     EditText edtGroup_name;
     Button submit;
+    ProgressDialog loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +77,7 @@ public class SearchAddActivity extends BaseActivity
         getSupportActionBar().setTitle("Add user");
         session = new Session(SearchAddActivity.this);
         textInputLayout = (TextInputLayout) findViewById(R.id.labelGroup);
+        loading = new ProgressDialog(SearchAddActivity.this);
         selectedUser = (GridView) findViewById(R.id.selectedUser);
         edtGroup_name = (EditText) findViewById(R.id.etGroupName);
         submit = (Button) findViewById(R.id.add);
@@ -101,12 +105,15 @@ public class SearchAddActivity extends BaseActivity
         MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
+        searchView.setQueryHint("Search user");
+        searchView.setFocusable(true);
+        searchView.setIconified(false);
+        searchView.requestFocusFromTouch();
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-
         Log.d(getLocalClassName(), query);
         getUser(query);
         return false;
@@ -151,6 +158,7 @@ public class SearchAddActivity extends BaseActivity
 
     private void processResponse(String result){
         data.clear();
+        Log.d("search", result);
         try {
             JSONObject jsonObject = new JSONObject(result);
             if(jsonObject.getString("status").equals("success")){
@@ -175,7 +183,9 @@ public class SearchAddActivity extends BaseActivity
     }
 
     private void addUser() {
-
+        loading.setMessage("Add room...");
+        loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        loading.show();
         final String group_name = edtGroup_name.getText().toString();
         Log.d("group", "Group name: " + group_name + " is empty? " + group_name.equals(""));
         StringRequest stringRequest = new StringRequest(Request.Method.POST, AppConfig.URL_ADD_CHAT_USER,
@@ -183,14 +193,19 @@ public class SearchAddActivity extends BaseActivity
                     @Override
                     public void onResponse(String response) {
                         Log.d("status", response);
-                        if(response.equals("room found"))
+                        loading.dismiss();
+                        if(response.equals("room found")) {
                             Toast.makeText(SearchAddActivity.this, "room found", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(SearchAddActivity.this, MessageActivity.class);
+                            startActivity(intent);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("status", error.toString());
+                        loading.dismiss();
                         Toast.makeText(SearchAddActivity.this, "An Error occur, Please try again later", Toast.LENGTH_SHORT).show();
                     }
                 }){

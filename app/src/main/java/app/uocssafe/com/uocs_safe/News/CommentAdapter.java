@@ -2,6 +2,7 @@ package app.uocssafe.com.uocs_safe.News;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,7 @@ import java.util.List;
 import app.uocssafe.com.uocs_safe.R;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHolder> {
+public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHolder>{
 
     private List<CommentModel> comments;
     Context context;
@@ -30,13 +31,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
             message = (TextView) itemView.findViewById(R.id.commentmsg);
             time = (TextView) itemView.findViewById(R.id.time);
             profile = (CircleImageView) itemView.findViewById(R.id.profile_image);
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    return false;
-                }
-            });
         }
+
     }
 
     CommentAdapter(Context context, List<CommentModel> comments){
@@ -56,8 +52,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
     public void onBindViewHolder(CommentAdapter.MyViewHolder holder, int position) {
 
         CommentModel comment = comments.get(position);
-        if(comment.getAvatar_link().equals(""))
-            holder.profile.setImageResource(R.drawable.ic_person_outline_black_24dp);
+        if(comment.getAvatar_link().equals("null"))
+            holder.profile.setImageResource(R.drawable.head_1);
         else
             Picasso.with(context).load(comment.getAvatar_link()).into(holder.profile);
         holder.username.setText(comment.getUsername());

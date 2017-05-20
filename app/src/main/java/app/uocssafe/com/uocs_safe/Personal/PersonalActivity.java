@@ -31,6 +31,7 @@ import java.util.List;
 import app.uocssafe.com.uocs_safe.BaseActivity;
 import app.uocssafe.com.uocs_safe.Helper.AppConfig;
 import app.uocssafe.com.uocs_safe.Helper.Session;
+import app.uocssafe.com.uocs_safe.Helper.StatusBottomSheetDialogFragment;
 import app.uocssafe.com.uocs_safe.R;
 import app.uocssafe.com.uocs_safe.login_register.Login;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -50,6 +51,7 @@ public class PersonalActivity extends AppCompatActivity implements MyReportAdapt
     LinearLayout bottomsheet;
     TextView tvStatus, tvReason, tvActionTaken;
     Session session;
+    ViewPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +68,10 @@ public class PersonalActivity extends AppCompatActivity implements MyReportAdapt
         collapsingToolbarLayout=(CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbarLayout.setTitle(session.getUsername());
 
-        if(session.getUserAvatar() == null)
+        if(session.getUserAvatar().equals("null"))
             profile_image.setImageResource(R.drawable.head_1);
         else
-            profile_image.setImageBitmap(decodeBase64(session.getUserAvatar()));
+            Picasso.with(getApplicationContext()).load(session.getUserAvatar()).into(profile_image);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -141,7 +143,7 @@ public class PersonalActivity extends AppCompatActivity implements MyReportAdapt
     }
 
     private void setupViewPager(ViewPager viewPager){
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new MyReportFragment(), "My Report");
         adapter.addFragment(new MyActivityFragment(), "My Activity");
         viewPager.setAdapter(adapter);
@@ -157,18 +159,22 @@ public class PersonalActivity extends AppCompatActivity implements MyReportAdapt
             action_taken = "-";
 
         if(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN){
-            String statusformat = String.format("Status : %s", status);
-            String reasonformat = String.format("Reason : %s", reason);
-            String actionformat = String.format("Action Taken: %s", action_taken);
-            tvStatus.setText(statusformat);
-            tvReason.setText(reasonformat);
-            tvActionTaken.setText(actionformat);
-            bottomSheetBehavior.setPeekHeight(200);
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+//            String statusformat = String.format("Status : %s", status);
+//            String reasonformat = String.format("Reason : %s", reason);
+//            String actionformat = String.format("Action Taken: %s", action_taken);
+//            tvStatus.setText(status);
+//            tvReason.setText(reason);
+//            tvActionTaken.setText(action_taken);
+//            bottomSheetBehavior.setPeekHeight(250);
+//            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            StatusBottomSheetDialogFragment bottomSheetDialogFragment = new StatusBottomSheetDialogFragment();
+            bottomSheetDialogFragment.setData(status, reason, action_taken);
+            bottomSheetDialogFragment.show(getSupportFragmentManager(), "Dialog");
         } else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         }
     }
+
 
     private class ViewPagerAdapter extends FragmentStatePagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();

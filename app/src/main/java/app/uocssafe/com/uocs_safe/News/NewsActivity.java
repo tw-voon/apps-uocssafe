@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.transition.Visibility;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,9 +12,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -49,6 +53,7 @@ public class NewsActivity extends BaseActivity implements SearchView.OnQueryText
     ArrayList<News> newsData = new ArrayList<>();
     internet_helper hasInternet;
     Request_Handler rh = new Request_Handler();
+    TextView noContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +64,7 @@ public class NewsActivity extends BaseActivity implements SearchView.OnQueryText
         loading = (ProgressBar) findViewById(R.id.loading);
         newslist.setVisibility(View.GONE);
         loading.setVisibility(View.VISIBLE);
+        noContent = (TextView) findViewById(R.id.no_content);
 
         newsAdapter = new NewsAdapter(NewsActivity.this, newsData);
         newslist.setAdapter(newsAdapter);
@@ -112,6 +118,7 @@ public class NewsActivity extends BaseActivity implements SearchView.OnQueryText
         try {
             JSONArray decodedResult = new JSONArray(result);
             Log.d("result", result);
+            newsData.clear();
             for (int i = 0; i<decodedResult.length(); i++){
                 JSONObject json_data = decodedResult.getJSONObject(i);
                 News news = new News(
@@ -119,7 +126,7 @@ public class NewsActivity extends BaseActivity implements SearchView.OnQueryText
                         json_data.getString("report_Title"),
                         json_data.getString("report_Description"),
                         json_data.getString("image"),
-                        json_data.getString("report_ID"),
+                        json_data.getString("ids"),
                         json_data.getString("created_at"),
                         json_data.getString("location_name"),
                         json_data.getString("avatar_link")
@@ -127,11 +134,27 @@ public class NewsActivity extends BaseActivity implements SearchView.OnQueryText
                 newsData.add(news);
                 newsAdapter.notifyDataSetChanged();
             }
+
+            if(decodedResult.length() == 0){
+                noContent.setVisibility(View.VISIBLE);
+            }
+
             newslist.setVisibility(View.VISIBLE);
             loading.setVisibility(View.GONE);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.uoc, menu);
+        menu.findItem(R.id.action_settings).setVisible(false);
+        MenuItem item = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(this);
+        return true;
     }
 
 
@@ -142,6 +165,32 @@ public class NewsActivity extends BaseActivity implements SearchView.OnQueryText
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        return false;
+
+        newText = newText.toLowerCase();
+        ArrayList<News> newList = new ArrayList<>();
+        for(News news : newsData)
+        {
+            String title = news.getReportTitle().toLowerCase();
+            String content = news.getNewsDescription();
+            String location = news.getLocation_name().toLowerCase();
+
+            if(title.contains(newText) || content.contains(newText) || location.contains(newText))
+            {
+                newList.add(news);
+//                Toast.makeText(Emergency_Contact.this, "value" + contacts.getContact_no(), Toast.LENGTH_SHORT).show();
+            }
+
+        }
+        if(newList.isEmpty())
+            Toast.makeText(NewsActivity.this, "No Result Found", Toast.LENGTH_SHORT).show();
+
+        newsAdapter.filter(newList);
+        return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getNewsFeed();
     }
 }

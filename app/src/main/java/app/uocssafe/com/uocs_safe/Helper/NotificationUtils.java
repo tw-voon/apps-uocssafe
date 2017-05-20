@@ -88,7 +88,22 @@ public class NotificationUtils {
 //            inboxStyle.addLine(message);
 //        }
 
+//        NotificationCompat.Builder mBuilders =
+//                new NotificationCompat.Builder(mContext)
+//                        .setSmallIcon(icon)
+//                        .setContentTitle(title)
+//                        .setContentIntent(resultPendingIntent)
+//                        .setDefaults(Notification.DEFAULT_ALL)
+//                        .setPriority(Notification.PRIORITY_HIGH);
+
         Notification notification;
+//
+//        notification = mBuilder.setSmallIcon(icon)
+//                        .setContentTitle(title)
+//                        .setContentIntent(resultPendingIntent)
+//                        .setDefaults(Notification.DEFAULT_ALL)
+//                        .setPriority(Notification.PRIORITY_HIGH);
+
         notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
                 .setAutoCancel(true)
                 .setContentTitle(title)
@@ -99,6 +114,8 @@ public class NotificationUtils {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
                 .setContentText(message)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(Notification.PRIORITY_MAX)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -121,6 +138,8 @@ public class NotificationUtils {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
                 .setContentText(message)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(Notification.PRIORITY_HIGH)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);

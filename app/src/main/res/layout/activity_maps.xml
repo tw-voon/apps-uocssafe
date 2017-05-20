@@ -15,7 +15,7 @@
         tools:context=".MapsActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
 
-    <include layout="@layout/bottom_sheet_map" />
+    <!--<include layout="@layout/bottom_sheet_map" />-->
 
 </android.support.design.widget.CoordinatorLayout>
 

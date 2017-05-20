@@ -12,8 +12,7 @@
         android:layout_width="match_parent"
         android:id="@+id/labelGroup"
         android:layout_height="wrap_content"
-        android:textColorHint="@android:color/darker_gray"
-        app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout">
+        android:textColorHint="@android:color/darker_gray">
 
         <EditText
             android:id="@+id/etGroupName"

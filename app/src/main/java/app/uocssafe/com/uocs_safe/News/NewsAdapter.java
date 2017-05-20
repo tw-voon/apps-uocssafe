@@ -62,7 +62,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
         final News news = newslist.get(position);
         holder.username.setText(news.getUsername());
         Log.d("Image Url ---", news.getImageLink());
-        Picasso.with(context).load(news.getImageLink()).fit().into(holder.report_image);
+        Picasso.with(context).load(news.getImageLink()).into(holder.report_image);
         if(news.getAvatar_link().equals(""))
             holder.profile_image.setImageResource(R.drawable.ic_person_outline_black_24dp);
         else
@@ -96,5 +96,12 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
     @Override
     public int getItemCount() {
         return newslist.size();
+    }
+
+    public void filter(ArrayList<News> filterList)
+    {
+        newslist = new ArrayList<>();
+        newslist.addAll(filterList);
+        notifyDataSetChanged();
     }
 }

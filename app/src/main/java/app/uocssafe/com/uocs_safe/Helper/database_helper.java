@@ -84,7 +84,6 @@ public class database_helper extends SQLiteOpenHelper{
         //String query = "Select * FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_PRODUCTNAME + " =  \"" + productname + "\"";
         String query = "SELECT * FROM offline_table WHERE urllink = \"" + url + "\"";
         Cursor res = uocs.rawQuery(query, null);
-        Cursor res2 = uocs.rawQuery("select * from offline_table", null);
         Log.d(TAG, "data"+res);
         return res;
     }
