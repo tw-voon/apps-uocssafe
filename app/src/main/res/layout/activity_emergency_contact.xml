@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:scaleType="fitXY"
-        android:src="@drawable/actionbar_header_primary"/>
+        android:src="@drawable/actionbar_header_darkprimary"/>
 
     <ProgressBar
         android:layout_width="50dp"

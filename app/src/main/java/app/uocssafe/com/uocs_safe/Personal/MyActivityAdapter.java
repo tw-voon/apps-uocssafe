@@ -59,10 +59,24 @@ public class MyActivityAdapter extends RecyclerView.Adapter<MyActivityAdapter.My
         final MyActivityModel model = data.get(position);
         holder.action_name.setText(Html.fromHtml(model.getAction()));
         holder.timestamp.setText(model.getTimestamp());
-        if(model.getAvatar_link().equals(""))
-            holder.profile_image.setImageResource(R.drawable.ic_person_outline_black_24dp);
-        else
-            Picasso.with(context).load(model.getAvatar_link()).into(holder.profile_image);
+
+        if(model.getUser_id().equals(session.getUserID())) {
+            if(session.getUserAvatar() == null || session.getUserAvatar().equals("null"))
+                holder.profile_image.setImageResource(R.drawable.head_1);
+            else
+                Picasso.with(context).load(session.getUserAvatar()).into(holder.profile_image);
+        }
+        else {
+            if(model.getAvatar_link().equals("") || model.getAvatar_link().equals("null"))
+                holder.profile_image.setImageResource(R.drawable.head_2);
+            else
+                Picasso.with(context).load(model.getAvatar_link()).into(holder.profile_image);
+        }
+
+//        if(model.getAvatar_link().equals(""))
+//            holder.profile_image.setImageResource(R.drawable.ic_person_outline_black_24dp);
+//        else
+//            Picasso.with(context).load(model.getAvatar_link()).into(holder.profile_image);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -30,6 +30,15 @@ public class Session {
         editor.commit();
     }
 
+    public void setGuess(boolean guestmode){
+        editor.putBoolean("guestmode",guestmode);
+        editor.commit();
+    }
+
+    public boolean isGuest(){
+        return prefs.getBoolean("guestmode", false);
+    }
+
     public void setPermission(String key, boolean permission){
         editor.putBoolean(key,permission);
         editor.commit();

@@ -22,10 +22,6 @@ import java.util.ArrayList;
 import app.uocssafe.com.uocs_safe.Message.MessageAdapter;
 import app.uocssafe.com.uocs_safe.R;
 
-/**
- * Created by User on 6/2/2017.
- */
-
 public class contactAdapter extends RecyclerView.Adapter<contactAdapter.MyViewHolder>{
 
     ArrayList<Contact> contactList = new ArrayList<>();
@@ -106,4 +102,4 @@ public class contactAdapter extends RecyclerView.Adapter<contactAdapter.MyViewHo
         notifyDataSetChanged();
     }
 
-    }
+}

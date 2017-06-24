@@ -188,6 +188,7 @@ public class Reporting_Category extends BaseActivity
                             Toast.makeText(Reporting_Category.this, "Success uploaded to server", Toast.LENGTH_LONG).show();
                             Intent intent = new Intent(Reporting_Category.this, UOCSActivity.class);
                             startActivity(intent);
+                            finish();
                         }
                         else
                             loading.dismiss();

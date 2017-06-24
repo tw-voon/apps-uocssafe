@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="90dp"
             android:scaleType="fitXY"
-            android:src="@drawable/actionbar_header_primary"/>
+            android:src="@drawable/actionbar_header_darkprimary"/>
 
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view"
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/category"
                 android:textColorHint="@color/colorPrimary"
-                app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout">
+                app:hintTextAppearance="@style/TextAppearance.App.Spinner">
 
                 <EditText
                     android:id="@+id/etTitle"
@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/txtTitle"
                 android:textColorHint="@color/colorPrimary"
-                app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout">
+                app:hintTextAppearance="@style/TextAppearance.App.Spinner">
 
                 <EditText
                     android:id="@+id/etDesc"

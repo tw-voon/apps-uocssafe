@@ -91,7 +91,9 @@ public class BaseActivity extends AppCompatActivity {
         else
             user_name.setText(session.getUsername());
         Log.d("profile", "not avatar"+session.getUserAvatar());
-        if(session.getUserAvatar().equals("null")) {
+        if(session.isGuest())
+            user_profile.setImageResource(R.drawable.head_1);
+        else if(session.getUserAvatar().equals("null")) {
             user_profile.setImageResource(R.drawable.head_1);
             Log.d("profile", "not avatar");
         }
@@ -121,6 +123,7 @@ public class BaseActivity extends AppCompatActivity {
                     case R.id.mainmenu:
                         Intent main = new Intent(getApplicationContext(), UOCSActivity.class);
                         startActivity(main);
+                        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
                         drawerLayout.closeDrawers();
                         break;
 
@@ -170,10 +173,8 @@ public class BaseActivity extends AppCompatActivity {
                         break;
 
                     case R.id.out:
-                        if(check_access()) {
                             logout();
                             drawerLayout.closeDrawers();
-                        }
                         break;
                 }
                 return false;
@@ -223,9 +224,11 @@ public class BaseActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     session.setLoggedin(false);
+                    session.setGuess(false);
                     session.clearPreference();
                     Intent out = new Intent(getApplicationContext(), Login.class);
                     startActivity(out);
+                    finish();
                 }
             });
             alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {

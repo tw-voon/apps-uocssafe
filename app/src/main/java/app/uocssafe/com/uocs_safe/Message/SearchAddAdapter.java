@@ -84,6 +84,7 @@ public class SearchAddAdapter extends RecyclerView.Adapter<SearchAddAdapter.MyVi
         holder.username.setText(user.getName());
         holder.selected.setOnCheckedChangeListener(null);
         holder.selected.setChecked(user.getSelected());
+        holder.previewMessage.setText("");
 
         holder.selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

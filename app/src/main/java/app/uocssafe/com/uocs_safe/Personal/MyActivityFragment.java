@@ -109,7 +109,8 @@ public class MyActivityFragment extends Fragment {
                         jsonObject.getString("report_id"),
                         jsonObject.getString("action_name"),
                         jsonObject.getString("created_at"),
-                        jsonObject.getString("avatar_link")
+                        jsonObject.getString("avatar_link"),
+                        jsonObject.getString("id")
                 );
                 data.add(myActivityModel);
             }

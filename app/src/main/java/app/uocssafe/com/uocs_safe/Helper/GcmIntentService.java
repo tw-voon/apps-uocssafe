@@ -50,23 +50,7 @@ public class GcmIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
         registerGCM();
-
-//        String key = intent.getStringExtra(KEY);
-//        Log.d("key: ", " " + key );
-//        switch (key) {
-//            case SUBSCRIBE:
-//                String topic = intent.getStringExtra(TOPIC);
-//                subcribeToTopic(topic);
-//                break;
-//            case UNSUBSCRIBE:
-//                String topic1 = intent.getStringExtra(TOPIC);
-//                unsubscribeFromTopic(topic1);
-//                break;
-//            default:
-//                registerGCM();
-//        }
     }
 
     private void registerGCM() {
@@ -105,7 +89,7 @@ public class GcmIntentService extends IntentService {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(),"line108: "+ error.toString() + error.getCause(),Toast.LENGTH_LONG ).show();
+//                        Toast.makeText(getApplicationContext(),"line108: "+ error.toString() + error.getCause(),Toast.LENGTH_LONG ).show();
 
                     }
                 }){
@@ -141,7 +125,7 @@ public class GcmIntentService extends IntentService {
             }
         } catch (IOException e) {
             Log.e("TAG", "Topic subscribe error. Topic: " + topic + ", error: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), "Topic subscribe error. Topic: " + topic + ", error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), "Topic subscribe error. Topic: " + topic + ", error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

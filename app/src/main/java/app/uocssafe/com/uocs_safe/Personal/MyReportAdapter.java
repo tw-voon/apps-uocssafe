@@ -72,7 +72,7 @@ public class MyReportAdapter extends RecyclerView.Adapter<MyReportAdapter.MyView
 
         final MyReportModel model = data.get(position);
 
-        if(session.getUserAvatar() == null)
+        if(session.getUserAvatar() == null || session.getUserAvatar().equals("null"))
             holder.profile_image.setImageResource(R.drawable.head_1);
         else
             Picasso.with(context).load(session.getUserAvatar()).into(holder.profile_image);

@@ -69,22 +69,34 @@ public class UOCSActivity extends BaseActivity{
         onClick();
 
         siren = (LinearLayout) findViewById(R.id.sirens);
-        mp = MediaPlayer.create(UOCSActivity.this, R.raw.siren);
-        mp.setLooping(true);
+
+
         siren.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("sound", sound+"");
-                if(!mp.isPlaying()) {
-                    sound = true;
-                    mp.start();
+
+                if(mp == null){
+                    mp = MediaPlayer.create(UOCSActivity.this, R.raw.siren);
+                    mp.setLooping(true);
                     siren.setBackgroundColor(getResources().getColor(R.color.colorOrange));
-                }
-                else{
-                    sound = false;
-                    mp.pause();
+                    mp.start();
+                } else {
+                    mp.stop();
+                    mp.release();
+                    mp = null;
                     siren.setBackgroundColor(getResources().getColor(R.color.colorAmber));
                 }
+//                if(!mp.isPlaying()) {
+//                    sound = true;
+//                    mp.start();
+//                    siren.setBackgroundColor(getResources().getColor(R.color.colorOrange));
+//                }
+//                else{
+//                    sound = false;
+//                    mp.pause();
+//                    siren.setBackgroundColor(getResources().getColor(R.color.colorAmber));
+//                }
             }
         });
 
@@ -263,8 +275,6 @@ public class UOCSActivity extends BaseActivity{
     @Override
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-        sound = false;
-        mp.stop();
         super.onPause();
     }
 }

@@ -172,7 +172,7 @@ public class Register extends AppCompatActivity {
                 session.putData(dataObject.getString("id"), dataObject.getString("name"), dataObject.getString("avatar_link"));
                 registerKey(dataObject.getString("id"));
                 session.putUserAvatar(dataObject.getString("avatar_link"));
-                Toast.makeText(Register.this, dataObject.getInt("id") + " " + dataObject.getString("name"), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(Register.this, dataObject.getInt("id") + " " + dataObject.getString("name"), Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(Register.this, UOCSActivity.class));
                 finish();
             } else

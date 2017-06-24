@@ -7,7 +7,7 @@ import android.view.WindowManager;
 
 public class AppConfig {
 
-    private static String URL_DOMAIN = "http://192.168.137.226/uocs-safe/public/";
+    private static String URL_DOMAIN = "http://192.168.43.14/uocs-safe/public/";
 //    private static String URL_DOMAIN = "http://10.87.133.84/uocs-safe/public/";
 //    private static String URL_DOMAIN = "http://kuchingitsolution.net/uocs-safe/public/";
     public static String URL_LOGIN = URL_DOMAIN + "api/login";
@@ -68,8 +68,5 @@ public class AppConfig {
                 window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
                 window.setStatusBarColor(activity.getResources().getColor(color));
             }
-
     }
-
-
 }

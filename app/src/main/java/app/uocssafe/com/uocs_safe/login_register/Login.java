@@ -151,7 +151,7 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        if(session.loggedin()){
+        if(session.loggedin() || session.isGuest()){
             startActivity(new Intent(Login.this,UOCSActivity.class));
             finish();
         }
@@ -243,7 +243,9 @@ public class Login extends AppCompatActivity {
         btnGuest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                session.setGuess(true);
                 startActivity(new Intent(Login.this,UOCSActivity.class));
+                finish();
             }
         });
     }
@@ -297,7 +299,7 @@ public class Login extends AppCompatActivity {
                 registerKey(dataObject.getString("id"));
                 session.putUserAvatar(dataObject.getString("avatar_link"));
                 session.putFirebaseID(dataObject.getString("firebaseID"));
-                Toast.makeText(Login.this, dataObject.getInt("id")+ " " + dataObject.getString("name") + " " + dataObject.getString("firebaseID"), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(Login.this, dataObject.getInt("id")+ " " + dataObject.getString("name") + " " + dataObject.getString("firebaseID"), Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(Login.this, UOCSActivity.class));
                 finish();
             }
